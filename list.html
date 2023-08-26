@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make List</title>
+    <link rel="stylesheet" href="style.css">
+    <link id="favicon" rel="icon"
+          href="images/gokul.png"
+          type="image/png">
+    <script type="module" src="script.js" defer></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="topbar" id="topbar">
+            <!-- <img src="images/real.png" alt="REAL" id="company-logo">
+            <div class="gujarati-div">
+                <input type="checkbox" id="gujarati"> <span class="gujarati-text">ગુજરાતી</span>
+            </div> -->
+        </div>
+        <div class="list-container" id="list-container">
+
+        </div>
+
+        <div class="download-pic" id="download-pic" style="display: none;">
+            <div class="top-bar">
+                <img src="images/gokul.png"  alt="logo" id="company-logo-in-list">
+                <div class="details">
+                    <p class="person-name" id="person-name"></p>
+                    <p class="date" id="date"></p>
+                </div>
+            </div>
+
+            <ul id="selected-items-list" class="selected-items-list">
+                <!-- <li>
+                    <span class="item-number">1</span>
+                    <span class="item-name">Masala noodles : 5</span>
+                    <span class="item-price">₹50</span>
+                </li> -->
+            </ul>
+
+            <div class="bottom-bar">
+                <span class="total-items" id="total-items">Total Items : 0</span>
+                <span class="total-price" id="total-price">₹0</span>
+            </div>
+        </div>
+
+        <button id="add-item-button" class="button add-item-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-plus">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+            </svg>  
+        </button>
+        <button id="download-button" class="button download-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-download">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+        </button>
+
+
+        <div class="popup-container" id="popup-container">
+            <form id="add-item-form" class="add-item-form">
+                <h1>Add Item</h1>
+                <input type="text" required placeholder="Item Name" id="form-name-input">
+                <input type="number" required placeholder="Price" id="form-price-input">
+                <div class="button-container">
+                    <input type="submit" id="submit-item-button" class="submit-item-button" value="ADD">
+                    <input type="button" id="cancel-button" value="Cancel" class="cancel-button">
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
