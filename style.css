@@ -176,13 +176,16 @@ input[type=checkbox]:checked::before {
 }
 .download-pic .top-bar {
   background: #F9F9F9;
+  background: #00ADCF;
+  background-image: linear-gradient(230deg, rgba(93, 93, 93, 0.03) 0%, rgba(93, 93, 93, 0.03) 50%, rgba(78, 78, 78, 0.03) 50%, rgba(78, 78, 78, 0.03) 100%), linear-gradient(107deg, rgba(55, 55, 55, 0.01) 0%, rgba(55, 55, 55, 0.01) 50%, rgba(170, 170, 170, 0.01) 50%, rgba(170, 170, 170, 0.01) 100%), linear-gradient(278deg, rgba(16, 16, 16, 0.03) 0%, rgba(16, 16, 16, 0.03) 50%, rgba(24, 24, 24, 0.03) 50%, rgba(24, 24, 24, 0.03) 100%), linear-gradient(205deg, rgba(116, 116, 116, 0.03) 0%, rgba(116, 116, 116, 0.03) 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 100%), linear-gradient(150deg, rgba(5, 5, 5, 0.03) 0%, rgba(5, 5, 5, 0.03) 50%, rgba(80, 80, 80, 0.03) 50%, rgba(80, 80, 80, 0.03) 100%), linear-gradient(198deg, rgba(231, 231, 231, 0.03) 0%, rgba(231, 231, 231, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(278deg, rgba(89, 89, 89, 0.03) 0%, rgba(89, 89, 89, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(217deg, rgba(28, 28, 28, 0.03) 0%, rgba(28, 28, 28, 0.03) 50%, rgba(202, 202, 202, 0.03) 50%, rgba(202, 202, 202, 0.03) 100%), linear-gradient(129deg, rgba(23, 23, 23, 0.03) 0%, rgba(23, 23, 23, 0.03) 50%, rgba(244, 244, 244, 0.03) 50%, rgba(244, 244, 244, 0.03) 100%), linear-gradient(135deg, rgb(1, 132, 255), rgb(0, 238, 234));
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 25px;
 }
 .download-pic .top-bar img {
-  width: 70px;
+  width: 90px;
+  filter: drop-shadow(0 5px 5px rgba(0, 46, 71, 0.392));
 }
 .download-pic .top-bar .details {
   text-align: right;
@@ -190,12 +193,14 @@ input[type=checkbox]:checked::before {
 .download-pic .top-bar .details .person-name {
   display: inline-block;
   color: #333333;
+  color: white;
   font-weight: 700;
   text-transform: capitalize;
 }
 .download-pic .top-bar .details .date {
   margin-top: 5px;
   color: #525252;
+  color: white;
   font-size: 0.7rem;
 }
 .download-pic .selected-items-list {
@@ -206,22 +211,19 @@ input[type=checkbox]:checked::before {
   display: flex;
   align-items: center;
   gap: 20px;
-  border-bottom: 1px solid #F3F3F3;
-  padding: 5px 25px;
-}
-.download-pic .selected-items-list li:last-child {
-  border-bottom: none;
+  padding: 15px 25px;
 }
 .download-pic .selected-items-list li:last-child .item-number {
-  background: orange;
+  color: #6d6d6d;
+}
+.download-pic .selected-items-list li:nth-child(even) {
+  background: #F8F8F8;
 }
 .download-pic .selected-items-list li .item-number {
-  background: #FCDC4D;
-  width: 25px;
   aspect-ratio: 1;
   border-radius: 50%;
-  color: white;
-  font-size: 0.7rem;
+  color: #BBBBBB;
+  font-size: 1rem;
   font-weight: 1000;
   display: flex;
   justify-content: center;
@@ -233,18 +235,20 @@ input[type=checkbox]:checked::before {
   color: #3b3b3b;
 }
 .download-pic .bottom-bar {
-  background: #F9F9F9;
+  background: #F8F8F8;
+  background-image: linear-gradient(230deg, rgba(93, 93, 93, 0.03) 0%, rgba(93, 93, 93, 0.03) 50%, rgba(78, 78, 78, 0.03) 50%, rgba(78, 78, 78, 0.03) 100%), linear-gradient(107deg, rgba(55, 55, 55, 0.01) 0%, rgba(55, 55, 55, 0.01) 50%, rgba(170, 170, 170, 0.01) 50%, rgba(170, 170, 170, 0.01) 100%), linear-gradient(278deg, rgba(16, 16, 16, 0.03) 0%, rgba(16, 16, 16, 0.03) 50%, rgba(24, 24, 24, 0.03) 50%, rgba(24, 24, 24, 0.03) 100%), linear-gradient(205deg, rgba(116, 116, 116, 0.03) 0%, rgba(116, 116, 116, 0.03) 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 100%), linear-gradient(150deg, rgba(5, 5, 5, 0.03) 0%, rgba(5, 5, 5, 0.03) 50%, rgba(80, 80, 80, 0.03) 50%, rgba(80, 80, 80, 0.03) 100%), linear-gradient(198deg, rgba(231, 231, 231, 0.03) 0%, rgba(231, 231, 231, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(278deg, rgba(89, 89, 89, 0.03) 0%, rgba(89, 89, 89, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(217deg, rgba(28, 28, 28, 0.03) 0%, rgba(28, 28, 28, 0.03) 50%, rgba(202, 202, 202, 0.03) 50%, rgba(202, 202, 202, 0.03) 100%), linear-gradient(129deg, rgba(23, 23, 23, 0.03) 0%, rgba(23, 23, 23, 0.03) 50%, rgba(244, 244, 244, 0.03) 50%, rgba(244, 244, 244, 0.03) 100%), linear-gradient(-45deg, rgb(1, 132, 255), rgb(0, 238, 234));
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .download-pic .bottom-bar .total-items {
   margin-left: 25px;
+  color: rgb(255, 255, 255);
   font-weight: 800;
 }
 .download-pic .bottom-bar .total-price {
-  background: #FCDC4D;
-  padding: 25px;
+  color: white;
+  padding: 15px 25px;
   font-weight: 800;
 }
 
