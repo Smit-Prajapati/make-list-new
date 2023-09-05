@@ -131,6 +131,7 @@ label {
     .text {
         flex: 1 1 50%;
         text-transform: capitalize;
+        font-weight: 700;
     }
 }
 
@@ -313,11 +314,11 @@ input[type="checkbox"] {
     padding: 20px;
     transition: all 0.5s ease-in-out;
 
-    .add-item-form {
+    .form {
         display: block;
         background: white;
         padding: 20px;
-        max-width: 500px;
+        width: 500px;
         border-radius: 20px;
         border: 5px solid #FCDC4D;
         h1 {
@@ -343,7 +344,7 @@ input[type="checkbox"] {
             gap: 20px;
             width: 100%;
 
-            .submit-item-button {
+            .submit-button {
                 width: unset;
                 background: #FCDC4D;
                 border: none;

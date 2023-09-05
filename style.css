@@ -108,6 +108,7 @@ label input[type=number]:focus {
 label .text {
   flex: 1 1 50%;
   text-transform: capitalize;
+  font-weight: 700;
 }
 
 input[type=checkbox] {
@@ -262,19 +263,19 @@ input[type=checkbox]:checked::before {
   padding: 20px;
   transition: all 0.5s ease-in-out;
 }
-.popup-container .add-item-form {
+.popup-container .form {
   display: block;
   background: white;
   padding: 20px;
-  max-width: 500px;
+  width: 500px;
   border-radius: 20px;
   border: 5px solid #FCDC4D;
 }
-.popup-container .add-item-form h1 {
+.popup-container .form h1 {
   color: #FCDC4D;
   text-transform: uppercase;
 }
-.popup-container .add-item-form input {
+.popup-container .form input {
   margin-top: 20px;
   width: 100%;
   background: white;
@@ -282,15 +283,15 @@ input[type=checkbox]:checked::before {
   padding: 20px;
   border-radius: 10px;
 }
-.popup-container .add-item-form input:focus {
+.popup-container .form input:focus {
   outline: 2px solid #FCDC4D;
 }
-.popup-container .add-item-form .button-container {
+.popup-container .form .button-container {
   display: flex;
   gap: 20px;
   width: 100%;
 }
-.popup-container .add-item-form .button-container .submit-item-button {
+.popup-container .form .button-container .submit-button {
   width: unset;
   background: #FCDC4D;
   border: none;
@@ -299,17 +300,17 @@ input[type=checkbox]:checked::before {
   font-size: 1.1rem;
   flex-grow: 1;
 }
-.popup-container .add-item-form .button-container .submit-item-button:hover {
+.popup-container .form .button-container .submit-button:hover {
   background: #fcd734;
 }
-.popup-container .add-item-form .button-container .cancel-button {
+.popup-container .form .button-container .cancel-button {
   width: unset;
   flex-grow: auto;
   border: 1px solid #FCDC4D;
   color: #FCDC4D;
   font-size: 1.1rem;
 }
-.popup-container .add-item-form .button-container .cancel-button:hover {
+.popup-container .form .button-container .cancel-button:hover {
   background: #FCDC4D;
   color: white;
 }

@@ -67,17 +67,28 @@
         </button>
 
 
-        <div class="popup-container" id="popup-container">
-            <form id="add-item-form" class="add-item-form">
+        <div class="popup-container add-item-popup-container" id="add-item-popup-container">
+            <form id="add-item-form" class="add-item-form form">
                 <h1>Add Item</h1>
                 <input type="text" required placeholder="Item Name" id="form-name-input">
                 <input type="number" required placeholder="Price" id="form-price-input">
                 <div class="button-container">
-                    <input type="submit" id="submit-item-button" class="submit-item-button" value="ADD">
-                    <input type="button" id="cancel-button" value="Cancel" class="cancel-button">
+                    <input type="submit" id="submit-item-button" class="submit-item-button submit-button" value="ADD">
+                    <input type="button" id="add-item-cancel-button" value="Cancel" class="cancel-button">
                 </div>
             </form>
         </div>
+
+        <div class="popup-container person-name-popup-container" id="person-name-popup-container">
+            <form class="person-name-form form" id="person-name-form">
+                <input type="text" name="person-name" id="person-name-input" required placeholder="Your Name">
+                <div class="button-container">
+                    <input type="submit" id="submit-person-name-button" class="submit-person-name-button submit-button" value="Submit">
+                    <input type="button" id="person-name-cancel-button" value="Cancel" class="cancel-button">
+                </div>
+            </form>
+        </div>
+
     </div>
 
 </body>

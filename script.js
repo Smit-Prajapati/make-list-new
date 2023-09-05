@@ -13,7 +13,7 @@ const searchQuery = urlParams.get("list");
 //-----------------------------------------on load generate list -----------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", function () {
-
+ 
   const favicon = document.getElementById("favicon");
 
   const topbar = document.getElementById("topbar");
@@ -21,35 +21,40 @@ document.addEventListener("DOMContentLoaded", function () {
   const downloadPicDiv = document.getElementById("download-pic");
 
   const addItemButton = document.getElementById("add-item-button");
-  const popupBox = document.getElementById("popup-container");
+  const addItemPopupBox = document.getElementById("add-item-popup-container");
   const addItemForm = document.getElementById("add-item-form");
-  const popupCloseButton = document.getElementById("cancel-button");
-
+  const addItemPopupCloseButton = document.getElementById("add-item-cancel-button");
   const downloadButton = document.getElementById("download-button");
+
+  const personNamePopupBox = document.getElementById("person-name-popup-container");
+  const personNameForm = document.getElementById("person-name-form");
+  const personNameInput = document.getElementById("person-name-input");
+  const personNameClosePopupButton = document.getElementById("person-name-cancel-button");
 
   let currentList;
   let selectedCompany;
   let companyLogoUrl;
-  let personName = "";
+  let personName = localStorage.getItem("storedPersonName");  
+  let isDownloading = false;
 
   if (searchQuery === "real") {
     currentList = realItemsList;
     selectedCompany = "real";
     companyLogoUrl = "images/real.png";
     document.title = "Real";
-    favicon.setAttribute("href", "images/real.png"); 
+    favicon.setAttribute("href", "images/real.png");
   } else if (searchQuery === "gokul") {
     currentList = gokulItemsList;
     selectedCompany = "gokul";
     companyLogoUrl = "images/gokul.png";
     document.title = "Gokul";
-    favicon.setAttribute("href", "images/gokul.png"); 
-  } else if(searchQuery === "balaji"){
+    favicon.setAttribute("href", "images/gokul.png");
+  } else if (searchQuery === "balaji") {
     currentList = balajiItemsList;
     selectedCompany = "balaji";
     companyLogoUrl = "images/balaji.png";
     document.title = "Balaji";
-    favicon.setAttribute("href", "images/balaji.png"); 
+    favicon.setAttribute("href", "images/balaji.png");
   }
 
   generateTopbar();
@@ -130,13 +135,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if (checkboxes[index].checked) {
           const li = document.createElement("li");
           li.innerHTML = `<span class="item-number">${number}</span>
-          <span class="item-name">${currentList[index].name} : ${amountInputs[index].value}</span>
-          <span class="item-price">₹${currentList[index].price * amountInputs[index].value}</span>`;
-
+          <span class="item-name">${currentList[index].name} : ${
+            amountInputs[index].value
+          }</span>
+          <span class="item-price">₹${
+            currentList[index].price * amountInputs[index].value
+          }</span>`;
 
           number += 1;
           totalItems = totalItems + +amountInputs[index].value;
-          totalPrice = totalPrice + currentList[index].price * amountInputs[index].value;
+          totalPrice =
+            totalPrice + currentList[index].price * amountInputs[index].value;
 
           listDiv.appendChild(li);
         }
@@ -147,23 +156,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (totalItems > 0) {
         downloadPicDiv.style.display = "block";
-
       } else {
         downloadPicDiv.style.display = "none";
       }
     }
 
+    function showPersonNamePopup() {
+      personNamePopupBox.style.display = "flex";
+      personNameInput.focus();
+      personNameInput.value = personName;
+    }
+
+    personNameForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      localStorage.setItem("storedPersonName", personNameInput.value);
+
+      personName = localStorage.getItem("storedPersonName");
+      
+      if (personName.trim() !== "") {
+        updateSelectedItemsList();
+        downloadImage();
+        personNamePopupBox.style.display = "none";
+      }
+
+    })
+
     downloadButton.addEventListener("click", function () {
-      if (downloadPicDiv.style.display === "block") {
-        personName = prompt("Add your name");
-        if (personName.trim() !== "") {
-          updateSelectedItemsList();
-          downloadImage();
-        }
+      if (downloadPicDiv.style.display === "block" && !isDownloading) {
+        isDownloading = true;
+        showPersonNamePopup();
       } else {
         alert("No Item Selected");
       }
     });
+    personNameClosePopupButton.addEventListener("click", function() {
+      personNamePopupBox.style.display = "none";
+    })
   }
 
   function generateTopbar(company) {
@@ -188,14 +216,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //---------------------------------------------------popup----------------------------------------
   addItemButton.addEventListener("click", function () {
-    popupBox.style.display = "flex";
+    addItemPopupBox.style.display = "flex";
 
     const formNameInput = document.getElementById("form-name-input");
     formNameInput.focus();
   });
 
-  popupCloseButton.addEventListener("click", function () {
-    popupBox.style.display = "none";
+  addItemPopupCloseButton.addEventListener("click", function () {
+    addItemPopupBox.style.display = "none";
   });
 
   addItemForm.addEventListener("submit", function (e) {
@@ -211,8 +239,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     formNameInput.value = "";
     formPriceInput.value = "";
-    popupBox.style.display = "none";
+    addItemPopupBox.style.display = "none";
   });
+
+
+
+ 
 
   function getDate() {
     var today = new Date();
@@ -266,5 +298,6 @@ document.addEventListener("DOMContentLoaded", function () {
       link.download = getPicName() + ".png";
       link.click();
     });
+    isDownloading = false;
   }
 });
