@@ -191,6 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     personNameClosePopupButton.addEventListener("click", function() {
       personNamePopupBox.style.display = "none";
+      isDownloading = false;
     })
   }
 
