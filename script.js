@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let isDownloading = false;
 
   if (searchQuery === "real") {
-    currentList = realItemsList;
+    currentList = realItemsListGujarati;
     selectedCompany = "real";
     companyLogoUrl = "images/real.png";
     document.title = "Real";
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (selectedCompany === "real") {
       topbar.innerHTML = `<img src="images/real.png" alt="REAL" id="company-logo">
       <div class="gujarati-div">
-          <input type="checkbox" id="gujarati"> <span class="gujarati-text">ગુજરાતી</span>
+          <input type="checkbox" id="gujarati" checked> <span class="gujarati-text">ગુજરાતી</span>
       </div>`;
 
       const gujaratiCheckbox = document.getElementById("gujarati");
