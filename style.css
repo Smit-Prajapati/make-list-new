@@ -197,53 +197,86 @@ input[type=checkbox]:checked::before {
 
 .download-pic {
   margin-top: 50px;
+  background: #E9EAEB;
+  padding: 1rem;
 }
-.download-pic .top-bar {
-  background: #F9F9F9;
-  background: #00ADCF;
-  background-image: linear-gradient(230deg, rgba(93, 93, 93, 0.03) 0%, rgba(93, 93, 93, 0.03) 50%, rgba(78, 78, 78, 0.03) 50%, rgba(78, 78, 78, 0.03) 100%), linear-gradient(107deg, rgba(55, 55, 55, 0.01) 0%, rgba(55, 55, 55, 0.01) 50%, rgba(170, 170, 170, 0.01) 50%, rgba(170, 170, 170, 0.01) 100%), linear-gradient(278deg, rgba(16, 16, 16, 0.03) 0%, rgba(16, 16, 16, 0.03) 50%, rgba(24, 24, 24, 0.03) 50%, rgba(24, 24, 24, 0.03) 100%), linear-gradient(205deg, rgba(116, 116, 116, 0.03) 0%, rgba(116, 116, 116, 0.03) 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 100%), linear-gradient(150deg, rgba(5, 5, 5, 0.03) 0%, rgba(5, 5, 5, 0.03) 50%, rgba(80, 80, 80, 0.03) 50%, rgba(80, 80, 80, 0.03) 100%), linear-gradient(198deg, rgba(231, 231, 231, 0.03) 0%, rgba(231, 231, 231, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(278deg, rgba(89, 89, 89, 0.03) 0%, rgba(89, 89, 89, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(217deg, rgba(28, 28, 28, 0.03) 0%, rgba(28, 28, 28, 0.03) 50%, rgba(202, 202, 202, 0.03) 50%, rgba(202, 202, 202, 0.03) 100%), linear-gradient(129deg, rgba(23, 23, 23, 0.03) 0%, rgba(23, 23, 23, 0.03) 50%, rgba(244, 244, 244, 0.03) 50%, rgba(244, 244, 244, 0.03) 100%), linear-gradient(135deg, rgb(1, 132, 255), rgb(0, 238, 234));
+.download-pic .inner-div {
+  background: white;
+  padding: 0.5rem;
+  border-radius: 2rem;
+  box-shadow: 0px 19px 33.5px rgba(0, 0, 0, 0.08);
+}
+.download-pic .inner-div .top-bar {
+  display: flex;
+  flex-direction: column;
+}
+.download-pic .inner-div .top-bar .company-details {
+  background: #FFCACB;
+  border-radius: calc(2rem - 8px);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.25rem;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+  position: relative;
+  z-index: 2;
+}
+.download-pic .inner-div .top-bar .company-details .image-container {
+  padding: 0.5rem;
+  background: white;
+  border-radius: calc(2rem - 10px);
+  height: 80px;
+  width: 80px;
+}
+.download-pic .inner-div .top-bar .company-details .image-container img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.download-pic .inner-div .top-bar .company-details span {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #B46565;
+}
+.download-pic .inner-div .top-bar .details {
+  background: #B46565;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 25px;
+  position: relative;
+  z-index: 1;
+  margin-top: -1.8rem;
+  padding: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 0.5rem;
+  border-bottom-right-radius: 1.75rem;
+  border-bottom-left-radius: calc(2rem - 8px);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
 }
-.download-pic .top-bar img {
-  width: 90px;
-  filter: drop-shadow(0 5px 5px rgba(0, 46, 71, 0.392));
-}
-.download-pic .top-bar .details {
-  text-align: right;
-}
-.download-pic .top-bar .details .person-name {
-  display: inline-block;
-  color: #333333;
+.download-pic .inner-div .top-bar .details .person-name, .download-pic .inner-div .top-bar .details .date {
   color: white;
-  font-weight: 700;
-  text-transform: capitalize;
+  font-size: 0.75rem;
 }
-.download-pic .top-bar .details .date {
-  margin-top: 5px;
-  color: #525252;
-  color: white;
-  font-size: 0.7rem;
+.download-pic .inner-div .selected-items-list {
+  padding-top: 20px;
+  border: 1px solid #E9EAEB;
+  margin-top: -1.5rem;
 }
-.download-pic .selected-items-list {
-  padding: 20px 0px;
-}
-.download-pic .selected-items-list li {
+.download-pic .inner-div .selected-items-list li {
   list-style-type: none;
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 15px 25px;
+  padding: 15px 8px;
 }
-.download-pic .selected-items-list li:last-child .item-number {
+.download-pic .inner-div .selected-items-list li:last-child .item-number {
   color: #6d6d6d;
 }
-.download-pic .selected-items-list li:nth-child(even) {
+.download-pic .inner-div .selected-items-list li:nth-child(even) {
   background: #F8F8F8;
 }
-.download-pic .selected-items-list li .item-number {
+.download-pic .inner-div .selected-items-list li .item-number {
   aspect-ratio: 1;
   border-radius: 50%;
   color: #BBBBBB;
@@ -253,27 +286,25 @@ input[type=checkbox]:checked::before {
   justify-content: center;
   align-items: center;
 }
-.download-pic .selected-items-list li .item-name {
+.download-pic .inner-div .selected-items-list li .item-name {
   flex-grow: 1;
-  font-weight: 700;
   color: #3b3b3b;
 }
-.download-pic .bottom-bar {
-  background: #F8F8F8;
-  background-image: linear-gradient(230deg, rgba(93, 93, 93, 0.03) 0%, rgba(93, 93, 93, 0.03) 50%, rgba(78, 78, 78, 0.03) 50%, rgba(78, 78, 78, 0.03) 100%), linear-gradient(107deg, rgba(55, 55, 55, 0.01) 0%, rgba(55, 55, 55, 0.01) 50%, rgba(170, 170, 170, 0.01) 50%, rgba(170, 170, 170, 0.01) 100%), linear-gradient(278deg, rgba(16, 16, 16, 0.03) 0%, rgba(16, 16, 16, 0.03) 50%, rgba(24, 24, 24, 0.03) 50%, rgba(24, 24, 24, 0.03) 100%), linear-gradient(205deg, rgba(116, 116, 116, 0.03) 0%, rgba(116, 116, 116, 0.03) 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03) 100%), linear-gradient(150deg, rgba(5, 5, 5, 0.03) 0%, rgba(5, 5, 5, 0.03) 50%, rgba(80, 80, 80, 0.03) 50%, rgba(80, 80, 80, 0.03) 100%), linear-gradient(198deg, rgba(231, 231, 231, 0.03) 0%, rgba(231, 231, 231, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(278deg, rgba(89, 89, 89, 0.03) 0%, rgba(89, 89, 89, 0.03) 50%, rgba(26, 26, 26, 0.03) 50%, rgba(26, 26, 26, 0.03) 100%), linear-gradient(217deg, rgba(28, 28, 28, 0.03) 0%, rgba(28, 28, 28, 0.03) 50%, rgba(202, 202, 202, 0.03) 50%, rgba(202, 202, 202, 0.03) 100%), linear-gradient(129deg, rgba(23, 23, 23, 0.03) 0%, rgba(23, 23, 23, 0.03) 50%, rgba(244, 244, 244, 0.03) 50%, rgba(244, 244, 244, 0.03) 100%), linear-gradient(-45deg, rgb(1, 132, 255), rgb(0, 238, 234));
+.download-pic .inner-div .selected-items-list li .item-amount {
+  font-weight: 800;
+}
+.download-pic .inner-div .bottom-bar {
+  background: #FFCACB;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem;
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
 }
-.download-pic .bottom-bar .total-items {
-  margin-left: 25px;
-  color: rgb(255, 255, 255);
-  font-weight: 800;
-}
-.download-pic .bottom-bar .total-price {
-  color: white;
-  padding: 15px 25px;
-  font-weight: 800;
+.download-pic .inner-div .bottom-bar span {
+  font-weight: 900;
+  color: #B46565;
 }
 
 .popup-container {
@@ -289,6 +320,7 @@ input[type=checkbox]:checked::before {
   justify-content: center;
   align-items: center;
   padding: 20px;
+  z-index: 99;
   transition: all 0.5s ease-in-out;
 }
 .popup-container .form {
