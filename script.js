@@ -36,24 +36,28 @@ document.addEventListener("DOMContentLoaded", function () {
   let companyLogoUrl;
   let personName = localStorage.getItem("storedPersonName");  
   let isDownloading = false;
+  let companyName;
 
   if (searchQuery === "real") {
     currentList = realItemsListGujarati;
     selectedCompany = "real";
     companyLogoUrl = "images/real.png";
     document.title = "Real";
+    companyName = "Real";
     favicon.setAttribute("href", "images/real.png");
   } else if (searchQuery === "gokul") {
     currentList = gokulItemsList;
     selectedCompany = "gokul";
     companyLogoUrl = "images/gokul.png";
     document.title = "Gokul";
+    companyName = "Gokul";
     favicon.setAttribute("href", "images/gokul.png");
   } else if (searchQuery === "balaji") {
     currentList = balajiItemsList;
     selectedCompany = "balaji";
     companyLogoUrl = "images/balaji.png";
     document.title = "Balaji";
+    companyName = "Balaji";
     favicon.setAttribute("href", "images/balaji.png");
   }
 
@@ -121,6 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const companyLogoImage = document.getElementById("company-logo-in-list");
       const personNameDiv = document.getElementById("person-name");
       const dateDiv = document.getElementById("date");
+      const companyNameDiv = document.getElementById("company-name");
 
       listDiv.innerHTML = "";
       let number = 1;
@@ -128,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let totalPrice = 0;
 
       companyLogoImage.src = companyLogoUrl;
+      companyNameDiv.innerHTML = companyName;
       personNameDiv.innerHTML = personName;
       dateDiv.innerHTML = getDate();
 
@@ -135,9 +141,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (checkboxes[index].checked) {
           const li = document.createElement("li");
           li.innerHTML = `<span class="item-number">${number}</span>
-          <span class="item-name">${currentList[index].name} : ${
+          <span class="item-name">${currentList[index].name} : <span class="item-amount">${
             amountInputs[index].value
-          }</span>
+          }</span></span>
           <span class="item-price">₹${
             currentList[index].price * amountInputs[index].value
           }</span>`;

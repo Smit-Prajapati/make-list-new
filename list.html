@@ -7,8 +7,8 @@
     <title>Make List</title>
     <link rel="stylesheet" href="style.css">
     <link id="favicon" rel="icon"
-          href="images/gokul.png"
-          type="image/png">
+            href="images/gokul.png"
+            type="image/png">
     <script type="module" src="script.js" defer></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
@@ -26,25 +26,32 @@
         </div>
 
         <div class="download-pic" id="download-pic" style="display: none;">
-            <div class="top-bar">
-                <img src="images/gokul.png"  alt="logo" id="company-logo-in-list">
-                <div class="details">
-                    <p class="person-name" id="person-name"></p>
-                    <p class="date" id="date"></p>
+            <div class="inner-div">
+                <div class="top-bar">
+                    <div class="company-details">
+                        <div class="image-container">
+                            <img src="images/gokul.png" alt="logo" id="company-logo-in-list">
+                        </div>
+                        <span id="company-name">GOKUL</span>
+                    </div>
+                    <div class="details">
+                        <p class="person-name" id="person-name"></p>
+                        <p class="date" id="date"></p>
+                    </div>
                 </div>
-            </div>
 
-            <ul id="selected-items-list" class="selected-items-list">
-                <!-- <li>
-                    <span class="item-number">1</span>
-                    <span class="item-name">Masala noodles : 5</span>
-                    <span class="item-price">₹50</span>
-                </li> -->
-            </ul>
+                <ul id="selected-items-list" class="selected-items-list">
+                    <!-- <li>
+                        <span class="item-number">1</span>
+                        <span class="item-name">Masala noodles : <span class="item-amount">69</span></span>
+                        <span class="item-price">₹50</span>
+                    </li> -->
+                </ul>
 
-            <div class="bottom-bar">
-                <span class="total-items" id="total-items">Total Items : 0</span>
-                <span class="total-price" id="total-price">₹0</span>
+                <div class="bottom-bar">
+                    <span class="total-items" id="total-items">Total Items : 0</span>
+                    <span class="total-price" id="total-price">₹0</span>
+                </div>
             </div>
         </div>
 
@@ -54,7 +61,7 @@
                 class="lucide lucide-plus">
                 <path d="M5 12h14" />
                 <path d="M12 5v14" />
-            </svg>  
+            </svg>
         </button>
         <button id="download-button" class="button download-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -83,7 +90,8 @@
             <form class="person-name-form form" id="person-name-form">
                 <input type="text" name="person-name" id="person-name-input" required placeholder="Your Name">
                 <div class="button-container">
-                    <input type="submit" id="submit-person-name-button" class="submit-person-name-button submit-button" value="Submit">
+                    <input type="submit" id="submit-person-name-button" class="submit-person-name-button submit-button"
+                        value="Submit">
                     <input type="button" id="person-name-cancel-button" value="Cancel" class="cancel-button">
                 </div>
             </form>
