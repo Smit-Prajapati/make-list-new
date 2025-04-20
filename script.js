@@ -13,7 +13,7 @@ const searchQuery = urlParams.get("list");
 //-----------------------------------------on load generate list -----------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", function () {
- 
+
   const favicon = document.getElementById("favicon");
 
   const topbar = document.getElementById("topbar");
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentList;
   let selectedCompany;
   let companyLogoUrl;
-  let personName = localStorage.getItem("storedPersonName");  
+  let personName = localStorage.getItem("storedPersonName");
   let isDownloading = false;
   let companyName;
 
@@ -90,7 +90,16 @@ document.addEventListener("DOMContentLoaded", function () {
       const lable = document.createElement("label");
 
       lable.innerHTML = `
-        <input type="checkbox" name="checkbox" value=${data.name}>
+       <div class="checkbox-container">
+            <input type="checkbox"  class="checkbox" name="checkbox" value=${data.name}">
+            <div class="checkmark">
+                <svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M22.7601 1.72837C22.6079 1.91613 8.92915 19.1417 8.79063 19.3192C8.46874 19.7242 8.01793 19.968 7.53726 19.9971C7.05659 20.0261 6.58538 19.8381 6.22719 19.4742C6.15032 19.3945 6.07907 19.3081 6.01408 19.2158L0.267659 10.9475C0.0962799 10.7536 -1.35132e-08 10.4905 0 10.2163C1.35132e-08 9.94201 0.0962799 9.67898 0.267659 9.48505C0.439039 9.29112 0.671479 9.18217 0.913846 9.18217C1.15621 9.18217 1.38865 9.29112 1.56003 9.48505L7.34451 14.6321L21.4647 0.272796C22.3385 -0.572982 23.5106 0.727565 22.7601 1.72837Z"
+                        fill="#593F28" />
+                </svg>
+            </div>
+        </div>
         <div class="text">${data.name}</div>
         <input type="number" name="amount" step="0.5" min="0" placeholder="0">`;
       return lable;
@@ -141,12 +150,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (checkboxes[index].checked) {
           const li = document.createElement("li");
           li.innerHTML = `<span class="item-number">${number}</span>
-          <span class="item-name">${currentList[index].name} : <span class="item-amount">${
-            amountInputs[index].value
-          }</span></span>
-          <span class="item-price">₹${
-            currentList[index].price * amountInputs[index].value
-          }</span>`;
+          <span class="item-name">${currentList[index].name} : <span class="item-amount">${amountInputs[index].value
+            }</span></span>
+          <span class="item-price">₹${currentList[index].price * amountInputs[index].value
+            }</span>`;
 
           number += 1;
           totalItems = totalItems + +amountInputs[index].value;
@@ -173,12 +180,12 @@ document.addEventListener("DOMContentLoaded", function () {
       personNameInput.value = personName;
     }
 
-    personNameForm.addEventListener("submit", function(e) {
+    personNameForm.addEventListener("submit", function (e) {
       e.preventDefault();
       localStorage.setItem("storedPersonName", personNameInput.value);
 
       personName = localStorage.getItem("storedPersonName");
-      
+
       if (personName.trim() !== "") {
         updateSelectedItemsList();
         downloadImage();
@@ -195,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("No Item Selected");
       }
     });
-    personNameClosePopupButton.addEventListener("click", function() {
+    personNameClosePopupButton.addEventListener("click", function () {
       personNamePopupBox.style.display = "none";
       isDownloading = false;
     })
@@ -205,7 +212,19 @@ document.addEventListener("DOMContentLoaded", function () {
     if (selectedCompany === "real") {
       topbar.innerHTML = `<img src="images/real.png" alt="REAL" id="company-logo">
       <div class="gujarati-div">
-          <input type="checkbox" id="gujarati" checked> <span class="gujarati-text">ગુજરાતી</span>
+          <label class="checkbox-container">
+        <div class="checkbox-container">
+            <input type="checkbox" id="gujarati" checked>
+            <div class="checkmark">
+                <svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M22.7601 1.72837C22.6079 1.91613 8.92915 19.1417 8.79063 19.3192C8.46874 19.7242 8.01793 19.968 7.53726 19.9971C7.05659 20.0261 6.58538 19.8381 6.22719 19.4742C6.15032 19.3945 6.07907 19.3081 6.01408 19.2158L0.267659 10.9475C0.0962799 10.7536 -1.35132e-08 10.4905 0 10.2163C1.35132e-08 9.94201 0.0962799 9.67898 0.267659 9.48505C0.439039 9.29112 0.671479 9.18217 0.913846 9.18217C1.15621 9.18217 1.38865 9.29112 1.56003 9.48505L7.34451 14.6321L21.4647 0.272796C22.3385 -0.572982 23.5106 0.727565 22.7601 1.72837Z"
+                        fill="#593F28" />
+                </svg>
+            </div>
+        </div>
+        <span class="gujarati-text">ગુજરાતી</span>
+    </label>
       </div>`;
 
       const gujaratiCheckbox = document.getElementById("gujarati");
@@ -251,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
- 
+
 
   function getDate() {
     var today = new Date();
