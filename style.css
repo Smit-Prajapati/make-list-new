@@ -125,7 +125,7 @@ label:nth-child(odd) {
 }
 label input[type=number] {
   background: white;
-  border: 1px solid grey;
+  border: 2px solid grey;
   outline: none;
   padding: 10px;
   font-size: 20px;
@@ -220,7 +220,7 @@ label .checkbox-container input:checked ~ .checkmark svg {
   bottom: 20px;
 }
 .download-button:hover {
-  background: #fcd734;
+  background: rgb(251.5773480663, 215.0690607735, 51.9226519337);
 }
 
 .add-item-button {
@@ -230,7 +230,7 @@ label .checkbox-container input:checked ~ .checkmark svg {
   bottom: 20px;
 }
 .add-item-button:hover {
-  background: #920000;
+  background: rgb(145.5, 0, 0);
 }
 
 .download-pic {
@@ -400,7 +400,7 @@ label .checkbox-container input:checked ~ .checkmark svg {
   flex-grow: 1;
 }
 .popup-container .form .button-container .submit-button:hover {
-  background: #fcd734;
+  background: rgb(251.5773480663, 215.0690607735, 51.9226519337);
 }
 .popup-container .form .button-container .cancel-button {
   width: unset;

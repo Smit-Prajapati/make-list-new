@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
         amountInputs[index].style.border = "2px solid #FCDC4D";
       } else {
         amountInputs[index].value = null;
-        amountInputs[index].style.border = "1px solid grey";
+        amountInputs[index].style.border = "2px solid grey";
       }
       updateSelectedItemsList();
     }
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
         amountInputs[index].style.border = "2px solid #FCDC4D";
       } else {
         checkboxes[index].checked = false;
-        amountInputs[index].style.border = "1px solid grey";
+        amountInputs[index].style.border = "2px solid grey";
       }
       updateSelectedItemsList();
     }
