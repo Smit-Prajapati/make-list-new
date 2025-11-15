@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
   generateTopbar();
   populateList();
 
-  function populateList() {
+  function populateList(previousState) {
     listContainer.innerHTML = "";
 
     currentList.forEach((item, index) => {
@@ -73,7 +73,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const checkboxes = document.getElementsByName("checkbox");
     const amountInputs = document.getElementsByName("amount");
-
+    
+    // Restore previous state if available
+    if (previousState) {
+      checkboxes.forEach((item, idx) => {
+        if (previousState[idx]) {
+          item.checked = previousState[idx].checked;
+          amountInputs[idx].value = previousState[idx].amount;
+          amountInputs[idx].style.border = previousState[idx].checked ? "2px solid #FCDC4D" : "2px solid grey";
+        }
+      });
+    }
     checkboxes.forEach((item, index) => {
       item.addEventListener("change", function () {
         handleCheckboxChange(index);
@@ -257,11 +267,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const formNameInput = document.getElementById("form-name-input");
     const formPriceInput = document.getElementById("form-price-input");
 
+    // Save current selection and amounts
+    const checkboxes = document.getElementsByName("checkbox");
+    const amountInputs = document.getElementsByName("amount");
+    let selectedState = [];
+    checkboxes.forEach((item, idx) => {
+      selectedState.push({
+        checked: item.checked,
+        amount: amountInputs[idx].value
+      });
+    });
+
     const newItem = formNameInput.value;
     const price = formPriceInput.value;
 
     currentList.push({ name: newItem, price: price });
-    populateList();
+    populateList(selectedState);
 
     formNameInput.value = "";
     formPriceInput.value = "";
