@@ -145,6 +145,14 @@ body {
     }
 }
 
+.item-images-checkbox-container {
+    margin: 5rem 1rem 1rem auto;
+    width: fit-content;
+    margin-left: auto;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
 label {
     display: flex;
     justify-content: space-between;
@@ -257,7 +265,7 @@ label {
 
 .button {
     position: fixed;
-    background: #FCDC4D;
+    background: #ffc800;
     width: 70px;
     aspect-ratio: 1;
     border-radius: 50%;
@@ -265,7 +273,9 @@ label {
     transition: all 0.5s ease-in-out;
     display: grid;
     place-content: center;
-    border: 1px solid black;
+    border: 2px solid rgb(255, 255, 255);
+    box-shadow: 0px 1px 1.1px rgba(0, 0, 0, 0.12), 0px 10px 10px rgba(0, 0, 0, 0.12);
+    z-index: 2;
 
     svg {
         stroke: white;
@@ -403,6 +413,26 @@ label {
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                }
+
+                .item-image-container {
+                    height: 50px;
+                    width: auto;
+                    margin: -0.7rem -1rem;
+
+                    img {
+                        height: 100%;
+                        width: 100%;
+                        object-fit: contain;
+                    }
+
+                    img.default-item-image {
+                        filter: grayscale(1);
+                    }
+
+                    &:empty {
+                        display: none;
+                    }
                 }
 
                 .item-name {

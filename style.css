@@ -107,6 +107,15 @@ body {
   margin-left: 15px;
 }
 
+.item-images-checkbox-container {
+  margin: 5rem 1rem 1rem auto;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin-left: auto;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
 label {
   display: flex;
   justify-content: space-between;
@@ -200,7 +209,7 @@ label .checkbox-container input:checked ~ .checkmark svg {
 
 .button {
   position: fixed;
-  background: #FCDC4D;
+  background: #ffc800;
   width: 70px;
   aspect-ratio: 1;
   border-radius: 50%;
@@ -208,7 +217,9 @@ label .checkbox-container input:checked ~ .checkmark svg {
   transition: all 0.5s ease-in-out;
   display: grid;
   place-content: center;
-  border: 1px solid black;
+  border: 2px solid rgb(255, 255, 255);
+  box-shadow: 0px 1px 1.1px rgba(0, 0, 0, 0.12), 0px 10px 10px rgba(0, 0, 0, 0.12);
+  z-index: 2;
 }
 .button svg {
   stroke: white;
@@ -324,6 +335,23 @@ label .checkbox-container input:checked ~ .checkmark svg {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.download-pic .inner-div .selected-items-list li .item-image-container {
+  height: 50px;
+  width: auto;
+  margin: -0.7rem -1rem;
+}
+.download-pic .inner-div .selected-items-list li .item-image-container img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.download-pic .inner-div .selected-items-list li .item-image-container img.default-item-image {
+  filter: grayscale(1);
+}
+.download-pic .inner-div .selected-items-list li .item-image-container:empty {
+  display: none;
 }
 .download-pic .inner-div .selected-items-list li .item-name {
   flex-grow: 1;
