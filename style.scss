@@ -145,6 +145,14 @@ body {
     }
 }
 
+.item-images-checkbox-container {
+    margin:5rem 1rem 1rem auto;
+    width: fit-content;
+    margin-left: auto;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
 label {
     display: flex;
     justify-content: space-between;
@@ -174,7 +182,7 @@ label {
         font-weight: 700;
 
         &:focus {
-            border: 1px solid black;
+            border: 2px solid black;
         }
     }
 
@@ -224,13 +232,16 @@ label {
             border: 1px solid #D5D7DA;
 
             svg {
-                display: none;
+                scale: 0;
+                rotate: -30deg;
                 position: relative;
                 width: 80%;
                 height: auto;
                 z-index: 2;
                 left: 25%;
                 justify-content: center;
+                transform-origin: 25% 75%;
+                transition: all 0.2s cubic-bezier(0.785, 0.135, 0.15, 0.86);
             }
 
             &::before {
@@ -248,7 +259,8 @@ label {
             background-color: #FFC008;
 
             svg {
-                display: block;
+                scale: 1;
+                rotate: 0deg;
             }
         }
 
@@ -298,7 +310,6 @@ label {
 }
 
 .download-pic {
-    margin-top: 50px;
     background: $grey-200;
     padding: 1rem;
 
@@ -403,6 +414,25 @@ label {
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                }
+
+                .item-image-container {
+                    height: 50px;
+                    width: auto;
+
+                    img {
+                        height: 100%;
+                        width: 100%;
+                        object-fit: contain;
+                    }
+
+                    img.default-item-image {
+                        filter: grayscale(1);
+                    }
+
+                    &:empty {
+                        display: none;
+                    }
                 }
 
                 .item-name {
