@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const topbar = document.getElementById("topbar");
   const listContainer = document.getElementById("list-container");
   const downloadPicDiv = document.getElementById("download-pic");
+  const isItemsImagesVisibleOption = document.getElementById("item-images-checkbox-container");
 
   const addItemButton = document.getElementById("add-item-button");
   const addItemPopupBox = document.getElementById("add-item-popup-container");
@@ -63,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   generateTopbar();
   populateList();
+  generateItemsImagesVisibleOption();
 
   function populateList(previousState) {
     listContainer.innerHTML = "";
@@ -101,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       lable.innerHTML = `
        <div class="checkbox-container">
-            <input type="checkbox"  class="checkbox" name="checkbox" value=${data.name}">
+            <input type="checkbox"  class="checkbox" name="checkbox" value=${data.name}>
             <div class="checkmark">
                 <svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -146,6 +148,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const dateDiv = document.getElementById("date");
       const companyNameDiv = document.getElementById("company-name");
 
+      const imagesVisibleCheckbox = document.getElementById("item-images-visible-checkbox");
+      const imagesVisible = imagesVisibleCheckbox ? imagesVisibleCheckbox.checked : true;
+
       listDiv.innerHTML = "";
       let number = 1;
       let totalItems = 0;
@@ -159,11 +164,25 @@ document.addEventListener("DOMContentLoaded", function () {
       checkboxes.forEach((item, index) => {
         if (checkboxes[index].checked) {
           const li = document.createElement("li");
-          li.innerHTML = `<span class="item-number">${number}</span>
-          <span class="item-name">${currentList[index].name} : <span class="item-amount">${amountInputs[index].value
-            }</span></span>
-          <span class="item-price">₹${currentList[index].price * amountInputs[index].value
-            }</span>`;
+
+          const imageHtml = currentList[index].imageUrl
+            ? `<img src="images/gokulItems/${currentList[index].imageUrl}" alt="item-image">`
+            : `<img src="images/gokul.png" class="default-item-image" alt="item-image">`;
+
+          const imageContainerHtml =
+            selectedCompany === "gokul"
+              ? `<div class="item-image-container" style="display: ${imagesVisible ? "block" : "none"}">${imageHtml}</div>`
+              : "";
+
+          li.innerHTML = `
+            <span class="item-number">${number}</span>
+            ${imageContainerHtml}
+            <span class="item-name">
+              ${currentList[index].name} : <span class="item-amount">${amountInputs[index].value}</span>
+            </span>
+            <span class="item-price">
+              ₹${currentList[index].price * amountInputs[index].value}
+            </span>`;
 
           number += 1;
           totalItems = totalItems + +amountInputs[index].value;
@@ -179,8 +198,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (totalItems > 0) {
         downloadPicDiv.style.display = "block";
+        isItemsImagesVisibleOption.style.display = "block";
       } else {
         downloadPicDiv.style.display = "none";
+        isItemsImagesVisibleOption.style.display = "none";
       }
     }
 
@@ -250,6 +271,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function generateItemsImagesVisibleOption() {
+    if (selectedCompany === "gokul") {
+      const imagesVisibleOptionDiv = document.getElementById("item-images-checkbox-container");
+      imagesVisibleOptionDiv.innerHTML = `
+        <label class="checkbox-container">
+            <div class="checkbox-container">
+                <input type="checkbox" id="item-images-visible-checkbox" checked>
+                <div class="checkmark">
+                    <svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M22.7601 1.72837C22.6079 1.91613 8.92915 19.1417 8.79063 19.3192C8.46874 19.7242 8.01793 19.968 7.53726 19.9971C7.05659 20.0261 6.58538 19.8381 6.22719 19.4742C6.15032 19.3945 6.07907 19.3081 6.01408 19.2158L0.267659 10.9475C0.0962799 10.7536 -1.35132e-08 10.4905 0 10.2163C1.35132e-08 9.94201 0.0962799 9.67898 0.267659 9.48505C0.439039 9.29112 0.671479 9.18217 0.913846 9.18217C1.15621 9.18217 1.38865 9.29112 1.56003 9.48505L7.34451 14.6321L21.4647 0.272796C22.3385 -0.572982 23.5106 0.727565 22.7601 1.72837Z"
+                            fill="#593F28" />
+                    </svg>
+                </div>
+            </div>
+            <span class="gujarati-text">Show Images</span>
+        </label>
+      `
+
+      const isItemsImagesVisibleOptionCheckbox = document.getElementById("item-images-visible-checkbox");
+      isItemsImagesVisibleOptionCheckbox.addEventListener("change", function () {
+        const itemImageContainers = document.getElementsByClassName("item-image-container");
+        for (let i = 0; i < itemImageContainers.length; i++) {
+          itemImageContainers[i].style.display = this.checked ? "block" : "none";
+        }
+      })
+    }
+  }
+
   //---------------------------------------------------popup----------------------------------------
   addItemButton.addEventListener("click", function () {
     addItemPopupBox.style.display = "flex";
@@ -309,6 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ") "
     );
   }
+
   function getPicName() {
     var today = new Date();
     var dd = today.getDate();
