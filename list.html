@@ -5,35 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Make List</title>
-    <link rel="stylesheet" href="style.css">
-    <link id="favicon" rel="icon" href="images/gokul.png" type="image/png">
-    <script type="module" src="script.js" defer></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link id="favicon" rel="icon" href="images/check-mark.png" type="image/png">
+    <script type="module" src="js/script.js" defer></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 
 <body>
     <div class="container" id="container">
-        <div class="topbar" id="topbar">
-            <!-- <img src="images/real.png" alt="REAL" id="company-logo">
-            <div class="gujarati-div">
-                <input type="checkbox" id="gujarati"> <span class="gujarati-text">ગુજરાતી</span>
-            </div> -->
-        </div>
-        <div class="list-container" id="list-container">
 
-        </div>
+        <!-- ── Top bar: logo + optional gujarati toggle ── -->
+        <div class="topbar" id="topbar"></div>
 
-        <div class="item-images-checkbox-container" id="item-images-checkbox-container" style="display: none;">
-        </div>
+        <!-- ── Tab bar (hidden when page has no tabs) ── -->
+        <div class="tab-bar" id="tab-bar" style="display:none;"></div>
 
-        <div class="download-pic" id="download-pic" style="display: none;">
+        <!-- ── Show Images toggle (above list, only for pages with images) ── -->
+        <div class="show-images-container" id="show-images-container" style="display:none;"></div>
+
+        <!-- ── Checkbox item list ── -->
+        <div class="list-container" id="list-container"></div>
+
+        <!-- ── Show Images toggle (above download preview, outside grey wrapper) ── -->
+        <div class="show-images-download-container" id="show-images-download-container" style="display:none;"></div>
+
+        <!-- ── Download preview card ── -->
+        <div class="download-pic" id="download-pic" style="display:none;">
             <div class="inner-div">
                 <div class="top-bar">
                     <div class="company-details">
                         <div class="image-container">
-                            <img src="images/gokul.png" alt="logo" id="company-logo-in-list">
+                            <img src="" alt="logo" id="company-logo-in-list">
                         </div>
-                        <span id="company-name">GOKUL</span>
+                        <span id="company-name"></span>
                     </div>
                     <div class="details">
                         <p class="person-name" id="person-name"></p>
@@ -41,17 +45,7 @@
                     </div>
                 </div>
 
-                <ul id="selected-items-list" class="selected-items-list">
-                    <!-- <li>
-                        <span class="item-number">1</span>
-                        <div class="item-image-container">
-                            <img src="https://gokulsnacks.com/wp-content/uploads/2022/07/Aeroplan_Front_image-500x500.png" alt="item-image">
-                        </div>
-                        <span class="item-name">Masala noodles : <span class="item-amount">69</span></span>
-                        <span class="item-price">₹50</span>
-                    </li> -->
-                </ul>
-
+                <ul id="selected-items-list" class="selected-items-list"></ul>
                 <div class="bottom-bar">
                     <span class="total-items" id="total-items">Total Items : 0</span>
                     <span class="total-price" id="total-price">₹0</span>
@@ -59,50 +53,48 @@
             </div>
         </div>
 
-        <button id="add-item-button" class="button add-item-button">
+        <!-- ── Floating action buttons ── -->
+        <button id="add-item-button" class="button add-item-button" title="Add item">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-plus">
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
+                stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" /><path d="M12 5v14" />
             </svg>
         </button>
-        <button id="download-button" class="button download-button">
+        <button id="download-button" class="button download-button" title="Download list">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-download">
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" x2="12" y1="15" y2="3" />
             </svg>
         </button>
 
-
-        <div class="popup-container add-item-popup-container" id="add-item-popup-container">
+        <!-- ── Add item popup ── -->
+        <div class="popup-container" id="add-item-popup-container">
             <form id="add-item-form" class="add-item-form form">
                 <h1>Add Item</h1>
                 <input type="text" required placeholder="Item Name" id="form-name-input">
                 <input type="number" required placeholder="Price" id="form-price-input">
                 <div class="button-container">
-                    <input type="submit" id="submit-item-button" class="submit-item-button submit-button" value="ADD">
+                    <input type="submit" id="submit-item-button" class="submit-button" value="ADD">
                     <input type="button" id="add-item-cancel-button" value="Cancel" class="cancel-button">
                 </div>
             </form>
         </div>
 
-        <div class="popup-container person-name-popup-container" id="person-name-popup-container">
+        <!-- ── Person name popup (before download) ── -->
+        <div class="popup-container" id="person-name-popup-container">
             <form class="person-name-form form" id="person-name-form">
+                <h1>Your Name</h1>
                 <input type="text" name="person-name" id="person-name-input" required placeholder="Your Name">
                 <div class="button-container">
-                    <input type="submit" id="submit-person-name-button" class="submit-person-name-button submit-button"
-                        value="Submit">
+                    <input type="submit" class="submit-button" value="Download">
                     <input type="button" id="person-name-cancel-button" value="Cancel" class="cancel-button">
                 </div>
             </form>
         </div>
 
     </div>
-
 </body>
 
 </html>

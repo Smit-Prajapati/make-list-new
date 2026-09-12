@@ -1,0 +1,870 @@
+@use "sass:color";
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+// ════════════════════════════════════════════════════════════════
+//  1) ACCENT — the ONE brand color.
+//     Every checkbox fill, active tab, popup border, hover state,
+//     and floating button below is DERIVED from $accent.
+//     Change this single line (e.g. to a blue) and the whole app
+//     re-themes automatically — nothing else in this file needsf
+//     to change.
+// ════════════════════════════════════════════════════════════════
+$accent: #fcd64d;
+
+$accent-strong: color.adjust($accent, $hue: -4deg, $lightness: -13%, $saturation: 3%);
+// ^ solid fills: checked checkbox, floating download button
+
+$accent-hover: color.adjust($accent, $lightness: -5%);
+// ^ hover state for accent-strong elements (buttons)
+
+$accent-tint: color.mix($accent, white, 22%);
+// ^ very light wash: checked-row background, checked-pill background
+
+$accent-ink: color.adjust($accent, $hue: -21deg, $saturation: -59%, $lightness: -39%);
+// ^ dark text/icon color drawn ON TOP of accent fills (active tab text, etc.)
+
+// ════════════════════════════════════════════════════════════════
+//  2) NEUTRALS — one base grey, every other grey derived from it.
+// ════════════════════════════════════════════════════════════════
+$white: #FFFFFF;
+$black: #000000;
+
+$grey-base: #888888; // muted text (price tags) — the neutral "accent" of the grey scale
+
+$grey-50:  color.mix($grey-base, white, 6%);   // alt row stripe
+$grey-100: color.mix($grey-base, white, 8%);   // page background
+$grey-200: color.mix($grey-base, white, 18%);  // borders, checkbox track, tab border, badges
+$grey-300: color.mix($grey-base, white, 33%);  // checkbox border
+$grey-400: color.mix($grey-base, white, 57%);  // faint item numbers
+$grey-500: color.mix($grey-base, black, 94%);  // input border
+$grey-600: color.mix($grey-base, black, 87%);  // "last item" number
+$grey-700: color.mix($grey-base, black, 75%);  // tab-bar / amount-button text
+$grey-800: color.mix($grey-base, black, 43%);  // selected-list item name text
+$grey-900: color.mix($grey-base, black, 38%);  // checkbox label text
+
+// ════════════════════════════════════════════════════════════════
+//  3) secondary accent — the "add item" button
+// ════════════════════════════════════════════════════════════════
+$accent-secondary: rgb(0, 83, 171);
+$accent-secondary-hover: color.adjust($accent-secondary, $lightness: -8%);
+
+// ════════════════════════════════════════════════════════════════
+//  4) CARD-VARIANT PALETTE
+//     Distinct identity colors for the home-page cards + the
+//     download-card theme (pink). These are intentionally NOT
+//     derived from $accent — they give each brand card (Gokul /
+//     Real / Balaji) its own look on the home page regardless of
+//     what the interactive accent color is set to. Add a
+//     variant-4/5/... here the same way if you add more cards.
+// ════════════════════════════════════════════════════════════════
+$pink-light:   #FFCACB;
+$pink-dark:    #d27b7b;
+$yellow-light: #FFECC6;
+$yellow-dark:  #B37900;
+$blue-light:   #E3E7FF;
+$blue-dark:    #525EA5;
+
+// ════════════════════════════════════════════════════════════════
+//  5) SHADOWS — every reused elevation / overlay pattern
+// ════════════════════════════════════════════════════════════════
+$shadow-color: $black;
+$shadow-card:   0px 19px 33.5px rgba($shadow-color, 0.08);  // nav-card, download-pic
+$shadow-pill:   0px 2px 8px rgba($shadow-color, 0.08);      // pill-toggle, gujarati-div
+$shadow-raised: 0px 1px 1.1px rgba($shadow-color, 0.12), 0px 10px 10px rgba($shadow-color, 0.12); // floating buttons + checkmark
+$shadow-detail: 0px 4px 4px rgba($shadow-color, 0.11);      // company-details / details bars
+$overlay-scrim: rgba($shadow-color, 0.342);                 // popup backdrop
+
+// ════════════════════════════════════════════════════════════════
+//  6) SPACING SCALE — every padding/margin/gap value in the file
+// ════════════════════════════════════════════════════════════════
+$space-1:   1px;
+$space-2:   2px;
+$space-4:   4px;
+$space-8:   8px;
+$space-10:  10px;
+$space-12:  12px;
+$space-15:  15px;
+$space-16:  16px;
+$space-18:  18px;
+$space-20:  20px;
+$space-50:  50px;
+$space-100: 100px;
+
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2rem;
+
+// One-off negative margins that visually compensate for a specific
+// element's size (pulling an image/overlay into place). These are
+// inherently single-use "layout hacks", not reusable scale steps —
+// named here so they're still visible at a glance, not buried
+// mid-file as magic numbers.
+$offset-list-image:      -15px -5px;
+$offset-details-overlap: -1.8rem;
+$offset-list-overlap:    -1.5rem;
+$offset-summary-image:   -0.7rem -1rem;
+
+// ════════════════════════════════════════════════════════════════
+//  7) RADIUS SCALE
+// ════════════════════════════════════════════════════════════════
+$radius-xs:     6px;
+$radius-sm:     10px;
+$radius-md:     1rem;
+$radius-form:   20px;   // popup form corners
+$radius-lg:     1.5rem;
+$radius-xl:     2rem;
+$radius-pill:   5rem;   // fully-pill shaped elements (gujarati toggle, checkbox pill)
+$radius-circle: 50%;
+$radius-details-corner: 1.75rem; // single-use corner on the download-card details bar
+
+// ════════════════════════════════════════════════════════════════
+//  8) LAYOUT
+// ════════════════════════════════════════════════════════════════
+$layout-width: 450px;
+$checkbox-size: 32px;
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: $black;
+    font-family: "Poppins", sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    background: $white;
+}
+
+// ────────────────────────────────────────────────────────────────
+// REUSABLE CHECKBOX COMPONENT
+// Used for: gujarati toggle, show-images toggle, and every list row
+// ────────────────────────────────────────────────────────────────
+
+@mixin checkbox-visual {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    font-size: 20px;
+    user-select: none;
+
+    input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    &:hover .checkmark {
+        background-color: $accent-strong;
+    }
+
+    &:active .checkmark::before {
+        scale: 0.9;
+    }
+
+    .checkmark {
+        position: relative;
+        top: 0;
+        left: 0;
+        height: $checkbox-size;
+        width: $checkbox-size;
+        background-color: $grey-200;
+        border-radius: $radius-circle;
+        border: 1px solid $grey-300;
+
+        svg {
+            scale: 0;
+            rotate: -30deg;
+            position: relative;
+            width: 80%;
+            height: auto;
+            z-index: 2;
+            left: 25%;
+            justify-content: center;
+            transform-origin: 25% 75%;
+            transition: all 0.2s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            background: $white;
+            border-radius: inherit;
+            box-shadow: 0px -1px 1px $white, #{$shadow-raised};
+            z-index: 1;
+        }
+    }
+
+    input:checked~.checkmark {
+        background-color: $accent-strong;
+
+        svg {
+            scale: 1;
+            rotate: 0deg;
+        }
+    }
+}
+
+// Standalone toggle (gujarati / show-images) — icon + text, own pill styling
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: $space-10;
+    cursor: pointer;
+
+    .checkbox-container {
+        @include checkbox-visual;
+    }
+
+    // Pill wrapper for toggles (not list items)
+    &.pill-toggle {
+        padding: $space-sm;
+        background: $white;
+        border-radius: $radius-pill;
+        box-shadow: $shadow-pill;
+        transition: background 0.2s;
+
+        &:has(input:checked) {
+            background: $accent-tint;
+        }
+    }
+
+    .checkbox-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: $grey-900;
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// HOME PAGE — nav cards
+// ────────────────────────────────────────────────────────────────
+
+.navbar {
+    width: $layout-width;
+    min-height: 100dvh;
+    display: grid;
+    padding: $space-xl $space-md;
+    background: $grey-100;
+
+    .navbar-container {
+        list-style-type: none;
+        display: flex;
+        flex-direction: column;
+        gap: $space-xl;
+        justify-content: center;
+        margin: 0 auto $space-50 auto;
+        width: 100%;
+
+        .nav-card {
+            display: inline-block;
+            width: 100%;
+            padding: $space-8 $space-4 $space-4 $space-4;
+            border-radius: $radius-md;
+            text-decoration: none;
+            box-shadow: $shadow-card;
+
+            h3 {
+                font-size: 1.5rem;
+                padding: 0 $space-md;
+            }
+
+            .image-container {
+                height: 216px;
+                background: $white;
+                border-radius: inherit;
+
+                img {
+                    height: 100%;
+                    width: 100%;
+                    object-fit: contain;
+                }
+            }
+
+            &.variant-1 {
+                background: $pink-light;
+
+                h3 {
+                    color: $pink-dark;
+                }
+            }
+
+            &.variant-2 {
+                background: $yellow-light;
+
+                h3 {
+                    color: $yellow-dark;
+                }
+            }
+
+            &.variant-3 {
+                background: $blue-light;
+
+                h3 {
+                    color: $blue-dark;
+                }
+            }
+        }
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// LIST PAGE — wrapper
+// ────────────────────────────────────────────────────────────────
+
+.container {
+    width: 100%;
+    max-width: $layout-width;
+    padding-bottom: $space-100;
+    position: relative;
+
+    // ── Topbar ──
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 $space-20;
+        background: rgba($white, 0.3);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        border-bottom: 1px solid $white;
+
+        // Center logo when there is no gujarati toggle
+        &:not(:has(.gujarati-div)) {
+            justify-content: center;
+        }
+
+        .gujarati-div {
+            border-radius: $radius-pill;
+            box-shadow: $shadow-pill;
+            overflow: hidden;
+        }
+
+        img#company-logo {
+            width: 80px;
+        }
+
+        .gujarati-text {
+            vertical-align: 10px;
+            font-size: 20px;
+            margin-left: $space-15;
+        }
+    }
+}
+
+// ── Tab bar ──
+
+.tab-bar {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    gap: $space-8;
+    padding: $space-12 $space-16;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.tab-btn {
+    flex: 0 0 auto;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: $space-8 $space-18;
+    border-radius: $radius-xl;
+    border: 2px solid $grey-200;
+    background: $white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    color: $grey-700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .tab-count-badge {
+        background: $grey-200;
+        color: $grey-700;
+        font-size: 12px;
+        font-weight: 700;
+        padding: $space-2 $space-8;
+        border-radius: $radius-xl;
+        min-width: 20px;
+        text-align: center;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    &.active {
+        background: $accent;
+        border-color: $accent;
+        color: $accent-ink;
+
+        .tab-count-badge {
+            background: rgba($accent-ink, 0.2);
+            color: $accent-ink;
+        }
+    }
+
+    &:hover:not(.active) {
+        border-color: $accent;
+        color: $accent-ink;
+    }
+}
+
+// ── Show Images toggle (above list and download preview) ──
+
+.show-images-container,
+.show-images-download-container {
+    margin: $space-md $space-md $space-md auto;
+    width: fit-content;
+    display: flex;
+    justify-content: flex-end;
+}
+
+// ────────────────────────────────────────────────────────────────
+// LIST ROWS — labels / checkboxes
+// ────────────────────────────────────────────────────────────────
+
+.list-container {
+    margin-bottom: 4rem;
+}
+
+label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $space-10;
+    font-size: 18px;
+    font-weight: 600;
+    padding: $space-15 $space-20;
+    cursor: pointer;
+
+    &:has(input[type="checkbox"]:checked) {
+        background: $accent-tint;
+    }
+
+    &:nth-child(odd) {
+        background: $grey-50;
+    }
+
+    &:has(input[type="checkbox"]:checked):nth-child(odd) {
+        background: $accent-tint;
+    }
+
+    // Item name + price tag
+    .text {
+        flex: 1 1 50%;
+        display: flex;
+        flex-direction: column;
+        gap: $space-1;
+
+        .item-display-name {
+            font-weight: 700;
+            text-transform: capitalize;
+            line-height: 1.2;
+        }
+
+        .item-price-tag {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: $grey-base;
+        }
+    }
+
+    // Amount input with +/- buttons
+    .amount-controls {
+        display: flex;
+        align-items: stretch;
+        gap: $space-4;
+
+        .button-column {
+            display: flex;
+            flex-direction: column;
+            gap: $space-2;
+        }
+    }
+
+    .amount-btn {
+        width: 32px;
+        height: 100%;
+        border-radius: $radius-xs;
+        border: 2px solid $grey-200;
+        background: $white;
+        font-size: 16px;
+        font-weight: 700;
+        color: $grey-700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        user-select: none;
+        flex: 1;
+
+        &:hover {
+            background: $accent;
+            border-color: $accent;
+            color: $accent-ink;
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+
+    input[type="number"] {
+        background: $white;
+        border: 2px solid $grey-500;
+        outline: none;
+        padding: $space-10;
+        font-size: 20px;
+        width: 80px;
+        border-radius: $radius-sm;
+        font-weight: 700;
+        text-align: center;
+
+        &:focus {
+            border: 2px solid $black;
+        }
+    }
+
+    // List item checkboxes use the same reusable component
+    .checkbox-container {
+        @include checkbox-visual;
+    }
+
+    // Item image container in list row
+    .item-image-container {
+        height: 55px;
+        width: 55px;
+        display: flex;
+        align-items: center;
+        margin: $offset-list-image;
+
+        .item-image {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .fallback-image {
+            filter: grayscale(100%) opacity(0.4);
+        }
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// FLOATING BUTTONS
+// ────────────────────────────────────────────────────────────────
+
+.button {
+    position: fixed;
+    background: $accent-secondary;
+    width: 70px;
+    aspect-ratio: 1;
+    border-radius: $radius-circle;
+    border: 2px solid $white;
+    transition: all 0.5s ease-in-out;
+    display: grid;
+    place-content: center;
+    box-shadow: $shadow-raised;
+    z-index: 2;
+    cursor: pointer;
+
+    svg {
+        stroke: $white;
+        stroke-width: 3px;
+    }
+}
+
+.download-button {
+    right: 20px;
+    bottom: 20px;
+
+    &:hover {
+        background: $accent-hover;
+    }
+}
+
+.add-item-button {
+    background: $accent-strong;
+    width: 50px;
+    right: 97px;
+    bottom: 24px;
+
+    &:hover {
+        background: $accent-hover;
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// DOWNLOAD PREVIEW CARD
+// ────────────────────────────────────────────────────────────────
+
+.download-pic {
+    background: $grey-200;
+    padding: $space-md;
+
+    .inner-div {
+        background: $white;
+        padding: $space-sm;
+        border-radius: $radius-xl;
+        box-shadow: $shadow-card;
+
+        .top-bar {
+            display: flex;
+            flex-direction: column;
+
+            .company-details {
+                background: $pink-light;
+                border-radius: calc(#{$radius-xl} - 8px);
+                display: flex;
+                align-items: center;
+                gap: $space-md;
+                padding: $space-xs;
+                box-shadow: $shadow-detail;
+                position: relative;
+                z-index: 2;
+
+                .image-container {
+                    padding: $space-sm;
+                    background: $white;
+                    border-radius: calc(#{$radius-xl} - 10px);
+                    height: 80px;
+                    width: 80px;
+
+                    img {
+                        height: 100%;
+                        width: 100%;
+                        object-fit: contain;
+                    }
+                }
+
+                span {
+                    font-size: 1.5rem;
+                    font-weight: 800;
+                    color: $pink-dark;
+                }
+            }
+
+            .details {
+                background: $pink-dark;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: relative;
+                z-index: 1;
+                margin-top: $offset-details-overlap;
+                padding: $space-md;
+                padding-top: $space-xl;
+                padding-bottom: $space-sm;
+                border-bottom-right-radius: $radius-details-corner;
+                border-bottom-left-radius: calc(#{$radius-xl} - 8px);
+                box-shadow: $shadow-detail;
+
+                .person-name,
+                .date {
+                    color: $white;
+                    font-size: 0.75rem;
+                }
+            }
+        }
+
+        .selected-items-list {
+            padding-top: $space-20;
+            border: 1px solid $grey-200;
+            margin-top: $offset-list-overlap;
+
+            li {
+                list-style-type: none;
+                display: flex;
+                align-items: center;
+                gap: $space-20;
+                padding: $space-15 $space-8;
+
+                &:nth-child(even) {
+                    background: $grey-50;
+                }
+
+                &.last-item {
+                    color: $grey-400;
+                }
+
+                .item-number {
+                    aspect-ratio: 1;
+                    border-radius: $radius-circle;
+                    color: $grey-400;
+                    font-size: 1rem;
+                    font-weight: 1000;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                &.last-item {
+                    .item-number {
+                        color: $grey-600;
+                    }
+
+                }
+
+                .item-image-container {
+                    height: 50px;
+                    width: auto;
+                    margin: $offset-summary-image;
+
+                    img {
+                        height: 100%;
+                        width: 100%;
+                        object-fit: contain;
+                    }
+
+                    img.default-item-image {
+                        filter: grayscale(1) opacity(0.4);
+                    }
+
+                    &:empty {
+                        display: none;
+                    }
+                }
+
+                .item-name {
+                    flex-grow: 1;
+                    color: $grey-800;
+                }
+
+                .item-amount {
+                    font-weight: 800;
+                }
+
+                // Price tag in the download card
+                .item-price-tag {
+                    font-size: 0.7rem;
+                    color: $grey-base;
+                    font-weight: 400;
+                }
+            }
+        }
+
+        .bottom-bar {
+            background: $pink-light;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: $space-md;
+            border-bottom-left-radius: $radius-lg;
+            border-bottom-right-radius: $radius-lg;
+
+            span {
+                font-weight: 900;
+                color: $pink-dark;
+            }
+        }
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// POPUPS
+// ────────────────────────────────────────────────────────────────
+
+.popup-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: $overlay-scrim;
+    backdrop-filter: blur(10px);
+    justify-content: center;
+    align-items: center;
+    padding: $space-20;
+    z-index: 9999999;
+    transition: all 0.5s ease-in-out;
+
+    .form {
+        display: block;
+        background: $white;
+        padding: $space-20;
+        width: 500px;
+        border-radius: $radius-form;
+        border: 5px solid $accent-strong;
+
+        h1 {
+            color: $accent-strong;
+            text-transform: uppercase;
+        }
+
+        input {
+            margin-top: $space-20;
+            width: 100%;
+            background: $white;
+            border: 1px solid $grey-200;
+            padding: $space-20;
+            border-radius: $radius-sm;
+
+            &:focus {
+                outline: 2px solid $accent-strong;
+            }
+        }
+
+        .button-container {
+            display: flex;
+            gap: $space-20;
+            width: 100%;
+
+            .submit-button {
+                width: unset;
+                background: $accent-strong;
+                border: none;
+                color: $white;
+                font-weight: 900;
+                font-size: 1.1rem;
+                flex-grow: 1;
+                cursor: pointer;
+
+                &:hover {
+                    background: $accent-hover;
+                }
+            }
+
+            .cancel-button {
+                width: unset;
+                flex-grow: 0;
+                border: 1px solid $accent-strong;
+                color: $accent;
+                font-size: 1.1rem;
+                cursor: pointer;
+
+                &:hover {
+                    background: $accent-strong;
+                    color: $white;
+                }
+            }
+        }
+    }
+}
