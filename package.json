@@ -1,0 +1,13 @@
+{
+  "name": "make-list",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Make List — data-driven checklist/order-sheet builder",
+  "scripts": {
+    "build:css": "sass css/style.scss css/style.css --style=expanded --no-source-map",
+    "watch:css": "sass --watch css/style.scss:css/style.css --style=expanded --no-source-map"
+  },
+  "devDependencies": {
+    "sass": "^1.104.0"
+  }
+}
