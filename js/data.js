@@ -107,7 +107,7 @@ export const pages = [
       { id: 1, tabId: "real", name: "Ratlami sev", gujarati: "રતલામી સેવ", price: 51, imageUrl: "Ratlami_Sev.png" },
       { id: 2, tabId: "real", name: "Aaloo sev", gujarati: "આલૂ સેવ", price: 51, imageUrl: "Aaloo_Sev.webp" },
       { id: 3, tabId: "real", name: "Sing bhujiya", gujarati: "સીંગ ભુજીયા", price: 51, imageUrl: "Sing_Bhujia_Bikaneri.png" },
-      { id: 4, tabId: "real", name: "Moong dal", gujarati: "મૂંગ દાળ", price: 54, imageUrl: "Moong_mogar.png" },
+      { id: 4, tabId: "real", name: "Moong dal", gujarati: "મૂંગ દાળ", price: 54, imageUrl: "Moong_Mogar.png" },
       { id: 5, tabId: "real", name: "Soya stick", gujarati: "સોયા સ્ટિક", price: 51, imageUrl: "Soya_Stick.png" },
       { id: 6, tabId: "real", name: "Soya chips", gujarati: "સોયા ચિપ્સ", price: 51, imageUrl: "Soya_Chips.png" },
       { id: 7, tabId: "real", name: "Tomato kurkure", gujarati: "ટોમેટો કુરકુરે", price: 51, imageUrl: "Tomato_Twist.png" },
