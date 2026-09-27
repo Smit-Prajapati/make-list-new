@@ -5,9 +5,19 @@
   "description": "Make List — data-driven checklist/order-sheet builder",
   "scripts": {
     "build:css": "sass css/style.scss css/style.css --style=expanded --no-source-map",
-    "watch:css": "sass --watch css/style.scss:css/style.css --style=expanded --no-source-map"
+    "watch:css": "sass --watch css/style.scss:css/style.css --style=expanded --no-source-map",
+    "build:android": "node build-android.mjs"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "esbuild": "^0.28.2",
     "sass": "^1.104.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/filesystem": "^8.1.3"
   }
 }

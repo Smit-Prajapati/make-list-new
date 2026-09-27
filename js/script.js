@@ -1,20 +1,40 @@
 import { pages } from "./data.js";
+import { savePng, setupBackButton } from "./platform.js";
+// ^ On web: loads js/platform.js (stub — no Capacitor).
+//   Android bundle: esbuild aliases platform.js → platform.native.js at build time.
 
 // ─────────────────────────── bootstrap ───────────────────────────────────────
 
-const urlParams  = new URLSearchParams(window.location.search);
-const pageId     = urlParams.get("list");
-const page       = pages.find((p) => p.id === pageId);
+const urlParams = new URLSearchParams(window.location.search);
+const requestedPageId = urlParams.get("list");
+const pageId = requestedPageId || sessionStorage.getItem("selectedListId");
+const selectedPage = pages.find((p) => p.id === pageId);
+const page = selectedPage || pages[0];
 
 if (!page) {
   document.body.innerHTML = `<p style="padding:2rem;font-family:sans-serif">
-    Page not found. <a href="index.html">Go back</a></p>`;
-  throw new Error(`No page data found for id="${pageId}"`);
+    No list pages are configured. <a href="index.html">Go back</a></p>`;
+  throw new Error("No page data is configured");
 }
 
-const hasTabs      = page.tabs && page.tabs.length > 0;
-const hasGujarati  = page.items.some((it) => it.gujarati);
-const hasImages    = page.items.some((it) => it.imageUrl);
+// A mistyped URL returns to Home. When Capacitor drops the query parameter,
+// use the selection stored by the home-page card click.
+if (requestedPageId && !pages.some((p) => p.id === requestedPageId)) {
+  window.location.replace(new URL("index.html", window.location.href));
+} else {
+  sessionStorage.setItem("selectedListId", page.id);
+}
+
+// Keep the address bar canonical, including after the native fallback above.
+if (!requestedPageId || requestedPageId !== page.id) {
+  const pageUrl = new URL(window.location.href);
+  pageUrl.searchParams.set("list", page.id);
+  window.history.replaceState(null, "", pageUrl);
+}
+
+const hasTabs = page.tabs && page.tabs.length > 0;
+const hasGujarati = page.items.some((it) => it.gujarati);
+const hasImages = page.items.some((it) => it.imageUrl);
 
 // Whether gujarati names are currently shown (initialized from defaultLanguage)
 let showGujarati = page.defaultLanguage === "gujarati";
@@ -23,7 +43,7 @@ let showListImages = true;
 // Whether images are shown in download preview (default: true)
 let showDownloadImages = true;
 // Active tab id (first tab by default, or null when page has no tabs)
-let activeTab    = hasTabs ? page.tabs[0].id : null;
+let activeTab = hasTabs ? page.tabs[0].id : null;
 // Per-item selection state keyed by item.id  →  { checked, amount }
 const selectionState = {};
 // Temporary items added via the Add-Item popup (appended to current tab)
@@ -36,24 +56,25 @@ let personName = localStorage.getItem("storedPersonName") || "";
 // ─────────────────────────── DOM refs ────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
-  const favicon              = document.getElementById("favicon");
-  const topbarEl             = document.getElementById("topbar");
-  const tabBarEl             = document.getElementById("tab-bar");
-  const listContainerEl      = document.getElementById("list-container");
-  const downloadPicEl        = document.getElementById("download-pic");
-  const addItemBtnEl         = document.getElementById("add-item-button");
-  const addItemPopupEl       = document.getElementById("add-item-popup-container");
-  const addItemFormEl        = document.getElementById("add-item-form");
-  const addItemCancelEl      = document.getElementById("add-item-cancel-button");
-  const downloadBtnEl        = document.getElementById("download-button");
-  const personNamePopupEl    = document.getElementById("person-name-popup-container");
-  const personNameFormEl     = document.getElementById("person-name-form");
-  const personNameInputEl    = document.getElementById("person-name-input");
-  const personNameCancelEl   = document.getElementById("person-name-cancel-button");
+  const favicon = document.getElementById("favicon");
+  const topbarEl = document.getElementById("topbar");
+  const tabBarEl = document.getElementById("tab-bar");
+  const listContainerEl = document.getElementById("list-container");
+  const downloadPicEl = document.getElementById("download-pic");
+  const addItemBtnEl = document.getElementById("add-item-button");
+  const addItemPopupEl = document.getElementById("add-item-popup-container");
+  const addItemFormEl = document.getElementById("add-item-form");
+  const addItemCancelEl = document.getElementById("add-item-cancel-button");
+  const downloadBtnEl = document.getElementById("download-button");
+  const personNamePopupEl = document.getElementById("person-name-popup-container");
+  const personNameFormEl = document.getElementById("person-name-form");
+  const personNameInputEl = document.getElementById("person-name-input");
+  const personNameCancelEl = document.getElementById("person-name-cancel-button");
 
   // ─── page setup ──────────────────────────────────────────────────────────
   document.title = page.name;
   favicon.setAttribute("href", page.logoUrl);
+  setupBackButton({ fallbackUrl: "index.html" });
 
   // ─── render ──────────────────────────────────────────────────────────────
   renderTopbar();
@@ -64,15 +85,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─────────────────────────── TOPBAR ──────────────────────────────────────
 
   function renderTopbar() {
+    // Back button — returns to the home page
+    const backHtml = `<a href="index.html" class="back-button" id="back-button" title="Back" aria-label="Back">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  </a>`;
+
     // Logo
     const logoHtml = `<img src="${page.logoUrl}" alt="${page.name}" id="company-logo">`;
-
-    // Gujarati toggle — only if any item on this page has a gujarati name
     const gujaratiHtml = hasGujarati
       ? `<div class="gujarati-div">${createCheckboxToggle('gujarati-toggle', showGujarati, 'ગુજરાતી')}</div>`
       : "";
-
-    topbarEl.innerHTML = logoHtml + gujaratiHtml;
+    topbarEl.innerHTML = backHtml + logoHtml + gujaratiHtml;
 
     if (hasGujarati) {
       document.getElementById("gujarati-toggle").addEventListener("change", function () {
@@ -179,13 +205,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Restore state on newly rendered rows
     listContainerEl.querySelectorAll("label[data-id]").forEach((row) => {
-      const id      = row.dataset.id;
-      const state   = selectionState[id];
-      const cb      = row.querySelector("input[type=checkbox]");
-      const numInp  = row.querySelector("input[type=number]");
+      const id = row.dataset.id;
+      const state = selectionState[id];
+      const cb = row.querySelector("input[type=checkbox]");
+      const numInp = row.querySelector("input[type=number]");
       if (state) {
-        cb.checked      = state.checked;
-        numInp.value    = state.amount ?? "";
+        cb.checked = state.checked;
+        numInp.value = state.amount ?? "";
         applyInputStyle(numInp, state.checked);
       }
     });
@@ -240,11 +266,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function attachRowListeners() {
     listContainerEl.querySelectorAll("label[data-id]").forEach((row) => {
-      const id      = row.dataset.id;
-      const cb      = row.querySelector("input[type=checkbox]");
-      const numInp  = row.querySelector("input[type=number]");
+      const id = row.dataset.id;
+      const cb = row.querySelector("input[type=checkbox]");
+      const numInp = row.querySelector("input[type=number]");
       const minusBtn = row.querySelector(".minus-btn");
-      const plusBtn  = row.querySelector(".plus-btn");
+      const plusBtn = row.querySelector(".plus-btn");
 
       cb.addEventListener("change", () => {
         if (cb.checked) {
@@ -302,7 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function saveRowState(id, cb, numInp) {
     selectionState[id] = {
       checked: cb.checked,
-      amount:  cb.checked ? numInp.value : "",
+      amount: cb.checked ? numInp.value : "",
     };
   }
 
@@ -313,19 +339,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─────────────────────────── DOWNLOAD PREVIEW ────────────────────────────
 
   function updateDownloadPreview() {
-    const listUl      = document.getElementById("selected-items-list");
+    const listUl = document.getElementById("selected-items-list");
     const totalItemEl = document.getElementById("total-items");
-    const totalPriceEl= document.getElementById("total-price");
-    const logoImgEl   = document.getElementById("company-logo-in-list");
+    const totalPriceEl = document.getElementById("total-price");
+    const logoImgEl = document.getElementById("company-logo-in-list");
     const companyNameEl = document.getElementById("company-name");
-    const personNameEl  = document.getElementById("person-name");
-    const dateEl        = document.getElementById("date");
+    const personNameEl = document.getElementById("person-name");
+    const dateEl = document.getElementById("date");
     const showImagesDownloadContainerEl = document.getElementById("show-images-download-container");
 
-    logoImgEl.src       = page.logoUrl;
+    logoImgEl.src = page.logoUrl;
     companyNameEl.textContent = page.name.toUpperCase();
-    personNameEl.textContent  = personName;
-    dateEl.textContent        = formatDate();
+    personNameEl.textContent = personName;
+    dateEl.textContent = formatDate();
 
     // Show Images toggle OUTSIDE download preview (only if page has images)
     // Only create once, then update checkbox state
@@ -348,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     listUl.innerHTML = "";
-    let counter    = 1;
+    let counter = 1;
     let totalItems = 0;
     let totalPrice = 0;
 
@@ -409,7 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
       listUl.appendChild(li);
     });
 
-    totalItemEl.textContent  = `Total items : ${totalItems}`;
+    totalItemEl.textContent = `Total items : ${totalItems}`;
     totalPriceEl.textContent = `₹${totalPrice}`;
 
     const hasSelected = counter > 1;
@@ -429,22 +455,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   addItemFormEl.addEventListener("submit", (e) => {
     e.preventDefault();
-    const nameInp  = document.getElementById("form-name-input");
+    const nameInp = document.getElementById("form-name-input");
     const priceInp = document.getElementById("form-price-input");
 
     const newItem = {
-      id:       `temp_${Date.now()}`,
-      tabId:    activeTab,       // add to currently visible tab
-      name:     nameInp.value.trim(),
+      id: `temp_${Date.now()}`,
+      tabId: activeTab,       // add to currently visible tab
+      name: nameInp.value.trim(),
       gujarati: null,
-      price:    parseFloat(priceInp.value) || 0,
+      price: parseFloat(priceInp.value) || 0,
       imageUrl: null,
     };
 
     tempItems.push(newItem);
     renderList();
 
-    nameInp.value  = "";
+    nameInp.value = "";
     priceInp.value = "";
     addItemPopupEl.style.display = "none";
   });
@@ -482,15 +508,20 @@ document.addEventListener("DOMContentLoaded", () => {
     downloadImage();
   });
 
-  function downloadImage() {
+  async function downloadImage() {
     location.href = "#download-pic";
-    html2canvas(downloadPicEl).then((canvas) => {
-      const link      = document.createElement("a");
-      link.href       = canvas.toDataURL("image/png");
-      link.download   = buildFileName();
-      link.click();
-      isDownloading   = false;
-    });
+
+    try {
+      const canvas = await html2canvas(downloadPicEl);
+      const dataUrl = canvas.toDataURL("image/png");
+
+      await savePng(dataUrl, buildFileName());
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Failed to save image.");
+    } finally {
+      isDownloading = false;
+    }
   }
 
   // ─────────────────────────── HELPERS ─────────────────────────────────────
@@ -529,8 +560,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildFileName() {
-    const d    = new Date();
-    const pad  = (n) => String(n).padStart(2, "0");
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, "0");
     return [
       page.id,
       pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear(),

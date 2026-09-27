@@ -32,16 +32,16 @@ $black: #000000;
 
 $grey-base: #888888; // muted text (price tags) — the neutral "accent" of the grey scale
 
-$grey-50:  color.mix($grey-base, white, 6%);   // alt row stripe
-$grey-100: color.mix($grey-base, white, 8%);   // page background
-$grey-200: color.mix($grey-base, white, 18%);  // borders, checkbox track, tab border, badges
-$grey-300: color.mix($grey-base, white, 33%);  // checkbox border
-$grey-400: color.mix($grey-base, white, 57%);  // faint item numbers
-$grey-500: color.mix($grey-base, black, 94%);  // input border
-$grey-600: color.mix($grey-base, black, 87%);  // "last item" number
-$grey-700: color.mix($grey-base, black, 75%);  // tab-bar / amount-button text
-$grey-800: color.mix($grey-base, black, 43%);  // selected-list item name text
-$grey-900: color.mix($grey-base, black, 38%);  // checkbox label text
+$grey-50: color.mix($grey-base, white, 6%); // alt row stripe
+$grey-100: color.mix($grey-base, white, 8%); // page background
+$grey-200: color.mix($grey-base, white, 18%); // borders, checkbox track, tab border, badges
+$grey-300: color.mix($grey-base, white, 33%); // checkbox border
+$grey-400: color.mix($grey-base, white, 57%); // faint item numbers
+$grey-500: color.mix($grey-base, black, 94%); // input border
+$grey-600: color.mix($grey-base, black, 87%); // "last item" number
+$grey-700: color.mix($grey-base, black, 75%); // tab-bar / amount-button text
+$grey-800: color.mix($grey-base, black, 43%); // selected-list item name text
+$grey-900: color.mix($grey-base, black, 38%); // checkbox label text
 
 // ════════════════════════════════════════════════════════════════
 //  3) secondary accent — the "add item" button
@@ -58,37 +58,38 @@ $accent-secondary-hover: color.adjust($accent-secondary, $lightness: -8%);
 //     what the interactive accent color is set to. Add a
 //     variant-4/5/... here the same way if you add more cards.
 // ════════════════════════════════════════════════════════════════
-$pink-light:   #FFCACB;
-$pink-dark:    #d27b7b;
+$pink-light: #FFCACB;
+$pink-dark: #d27b7b;
 $yellow-light: #FFECC6;
-$yellow-dark:  #B37900;
-$blue-light:   #E3E7FF;
-$blue-dark:    #525EA5;
+$yellow-dark: #B37900;
+$blue-light: #E3E7FF;
+$blue-dark: #525EA5;
 
 // ════════════════════════════════════════════════════════════════
 //  5) SHADOWS — every reused elevation / overlay pattern
 // ════════════════════════════════════════════════════════════════
 $shadow-color: $black;
-$shadow-card:   0px 19px 33.5px rgba($shadow-color, 0.08);  // nav-card, download-pic
-$shadow-pill:   0px 2px 8px rgba($shadow-color, 0.08);      // pill-toggle, gujarati-div
+$shadow-card: 0px 19px 33.5px rgba($shadow-color, 0.08); // nav-card, download-pic
+$shadow-pill: 0px 2px 8px rgba($shadow-color, 0.08); // pill-toggle, gujarati-div
 $shadow-raised: 0px 1px 1.1px rgba($shadow-color, 0.12), 0px 10px 10px rgba($shadow-color, 0.12); // floating buttons + checkmark
-$shadow-detail: 0px 4px 4px rgba($shadow-color, 0.11);      // company-details / details bars
-$overlay-scrim: rgba($shadow-color, 0.342);                 // popup backdrop
+$shadow-detail: 0px 4px 4px rgba($shadow-color, 0.11); // company-details / details bars
+$overlay-scrim: rgba($shadow-color, 0.342); // popup backdrop
 
 // ════════════════════════════════════════════════════════════════
 //  6) SPACING SCALE — every padding/margin/gap value in the file
 // ════════════════════════════════════════════════════════════════
-$space-1:   1px;
-$space-2:   2px;
-$space-4:   4px;
-$space-8:   8px;
-$space-10:  10px;
-$space-12:  12px;
-$space-15:  15px;
-$space-16:  16px;
-$space-18:  18px;
-$space-20:  20px;
-$space-50:  50px;
+$space-1: 1px;
+$space-2: 2px;
+$space-4: 4px;
+$space-8: 8px;
+$space-10: 10px;
+$space-12: 12px;
+$space-15: 15px;
+$space-16: 16px;
+$space-18: 18px;
+$space-20: 20px;
+$space-50: 50px;
+$space-65: 65px;
 $space-100: 100px;
 
 $space-xs: 0.25rem;
@@ -102,21 +103,21 @@ $space-xl: 2rem;
 // inherently single-use "layout hacks", not reusable scale steps —
 // named here so they're still visible at a glance, not buried
 // mid-file as magic numbers.
-$offset-list-image:      -15px -5px;
+$offset-list-image: -15px -5px;
 $offset-details-overlap: -1.8rem;
-$offset-list-overlap:    -1.5rem;
-$offset-summary-image:   -0.7rem -1rem;
+$offset-list-overlap: -1.5rem;
+$offset-summary-image: -0.7rem -1rem;
 
 // ════════════════════════════════════════════════════════════════
 //  7) RADIUS SCALE
 // ════════════════════════════════════════════════════════════════
-$radius-xs:     6px;
-$radius-sm:     10px;
-$radius-md:     1rem;
-$radius-form:   20px;   // popup form corners
-$radius-lg:     1.5rem;
-$radius-xl:     2rem;
-$radius-pill:   5rem;   // fully-pill shaped elements (gujarati toggle, checkbox pill)
+$radius-xs: 6px;
+$radius-sm: 10px;
+$radius-md: 1rem;
+$radius-form: 20px; // popup form corners
+$radius-lg: 1.5rem;
+$radius-xl: 2rem;
+$radius-pill: 5rem; // fully-pill shaped elements (gujarati toggle, checkbox pill)
 $radius-circle: 50%;
 $radius-details-corner: 1.75rem; // single-use corner on the download-card details bar
 
@@ -202,7 +203,8 @@ body {
             inset: 4px;
             background: $white;
             border-radius: inherit;
-            box-shadow: 0px -1px 1px $white, #{$shadow-raised};
+            box-shadow: 0px -1px 1px $white,
+            #{$shadow-raised};
             z-index: 1;
         }
     }
@@ -256,8 +258,8 @@ body {
     width: $layout-width;
     min-height: 100dvh;
     display: grid;
-    padding: $space-xl $space-md;
-    background: $grey-100;
+    // padding: $space-xl $space-md;
+    background: $grey-50;
 
     .navbar-container {
         list-style-type: none;
@@ -267,6 +269,7 @@ body {
         justify-content: center;
         margin: 0 auto $space-50 auto;
         width: 100%;
+        padding: $space-xl $space-md;
 
         .nav-card {
             display: inline-block;
@@ -329,39 +332,81 @@ body {
     max-width: $layout-width;
     padding-bottom: $space-100;
     position: relative;
+}
 
-    // ── Topbar ──
-    .topbar {
-        display: flex;
+// ── Topbar — shared by list page (.container) and home page (.navbar) ──
+.topbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 $space-20;
+    background: rgba($white, 0.3);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    border-bottom: 1px solid $white;
+
+    &:has(.gujarati-div) {
         justify-content: space-between;
+        padding-left: $space-65;
+    }
+
+    .back-button {
+        position: absolute;
+        left: $space-16;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
         align-items: center;
-        padding: 0 $space-20;
-        background: rgba($white, 0.3);
-        backdrop-filter: blur(10px);
-        position: sticky;
-        top: 0;
-        z-index: 999;
-        border-bottom: 1px solid $white;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: $radius-circle;
+        color: $grey-900;
+        background: rgba($white, 0.6);
+        text-decoration: none;
+        box-shadow: #{$shadow-pill};
+    }
 
-        // Center logo when there is no gujarati toggle
-        &:not(:has(.gujarati-div)) {
-            justify-content: center;
+    .gujarati-div {
+        border-radius: $radius-pill;
+        box-shadow: $shadow-pill;
+        overflow: hidden;
+    }
+
+    img#company-logo {
+        width: 80px;
+    }
+
+    .gujarati-text {
+        vertical-align: 10px;
+        font-size: 20px;
+        margin-left: $space-15;
+    }
+
+    // ── Home page variant: icon + "MAKE LIST" pinned left ──
+    &.home-topbar {
+        justify-content: flex-start;
+        padding: $space-12 $space-20;
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: $space-12;
         }
 
-        .gujarati-div {
-            border-radius: $radius-pill;
-            box-shadow: $shadow-pill;
-            overflow: hidden;
+        img#home-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
         }
 
-        img#company-logo {
-            width: 80px;
-        }
-
-        .gujarati-text {
-            vertical-align: 10px;
-            font-size: 20px;
-            margin-left: $space-15;
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: $grey-900;
         }
     }
 }

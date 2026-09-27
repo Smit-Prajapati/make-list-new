@@ -7,10 +7,10 @@ export const pages = [
   {
     id: "gokul",
     name: "Gokul",
-    logoUrl: "images/gokul.png",
+    logoUrl: "assets/images/gokul.png",
     cardVariant: "variant-1",
     defaultLanguage: "english",
-    imageFolder: "images/gokulItems/",
+    imageFolder: "assets/images/gokulItems/",
 
     tabs: [
       { id: "5", label: "₹5 Items" },
@@ -81,10 +81,10 @@ export const pages = [
   {
     id: "real",
     name: "Real",
-    logoUrl: "images/real.png",
+    logoUrl: "assets/images/real.png",
     cardVariant: "variant-2",
     defaultLanguage: "gujarati",
-    imageFolder: "images/realItems/",
+    imageFolder: "assets/images/realItems/",
 
     tabs: [
       { id: "real", label: "Real" },
@@ -325,10 +325,10 @@ export const pages = [
   {
     id: "balaji",
     name: "Balaji",
-    logoUrl: "images/balaji.png",
+    logoUrl: "assets/images/balaji.png",
     cardVariant: "variant-3",
     defaultLanguage: "english",
-    imageFolder: "images/balajiItems/",
+    imageFolder: "assets/images/balajiItems/",
 
     tabs: [],
 
