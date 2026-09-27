@@ -38,10 +38,10 @@ const hasImages = page.items.some((it) => it.imageUrl);
 
 // Whether gujarati names are currently shown (initialized from defaultLanguage)
 let showGujarati = page.defaultLanguage === "gujarati";
-// Whether images are shown in items list (default: true)
-let showListImages = true;
-// Whether images are shown in download preview (default: true)
+// Whether images are shown in the selected-items download preview.
 let showDownloadImages = true;
+// Current rendering mode. Selection state is independent from the view.
+let currentView = "list";
 // Active tab id (first tab by default, or null when page has no tabs)
 let activeTab = hasTabs ? page.tabs[0].id : null;
 // Per-item selection state keyed by item.id  →  { checked, amount }
@@ -52,6 +52,90 @@ const tempItems = [];
 let isDownloading = false;
 // Cached person name
 let personName = localStorage.getItem("storedPersonName") || "";
+
+// ─────────────────────────── VIEW REGISTRY ───────────────────────────────
+// Every view (list / grid2 / card / ...) is one self-contained entry here:
+// its button icon, whether it needs item images, which amount-control
+// layout it uses, and how to arrange one row's pieces.
+//
+// This is the whole point of the refactor: adding, removing, or changing a
+// view means editing ONE entry in this object — nothing else in the file
+// (createRow, renderViewSwitcher, updateViewSwitcher...) needs to change.
+// That's what keeps the file open for extension but closed for modification.
+
+// Two reusable amount-control layouts. A view just picks one by name
+// instead of duplicating the markup.
+const amountControlLayouts = {
+  // input first, +/- stacked beside it (used by the dense list view)
+  stacked: () => `
+    <div class="amount-controls">
+      <input type="number" name="amount" step="0.5" min="0" placeholder="0" aria-label="Amount">
+      <div class="button-column">
+        <button type="button" class="amount-btn plus-btn" aria-label="Increase">+</button>
+        <button type="button" class="amount-btn minus-btn" aria-label="Decrease">−</button>
+      </div>
+    </div>`,
+  // −, input, + side by side (used by the roomier card layouts)
+  row: () => `
+    <div class="amount-controls">
+      <button type="button" class="amount-btn minus-btn" aria-label="Decrease">−</button>
+      <input type="number" name="amount" step="0.5" min="0" placeholder="0" aria-label="Amount">
+      <button type="button" class="amount-btn plus-btn" aria-label="Increase">+</button>
+    </div>`,
+};
+
+const views = {
+  list: {
+    label: "List view",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="preview-icon"><rect width="18" height="18" x="3" y="3" rx="2"/>
+      <path d="M21 7.5H3"/><path d="M21 12H3"/><path d="M21 16.5H3"/></svg>`,
+    requiresImages: false,
+    controls: "stacked",
+    // (checkboxHtml, imageHtml, textHtml, controlsHtml) → row markup
+    layout: (checkboxHtml, imageHtml, textHtml, controlsHtml) => `
+      ${checkboxHtml}
+      ${imageHtml}
+      ${textHtml}
+      ${controlsHtml}`,
+  },
+  card: {
+    label: "One column card view",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+      class="lucide lucide-rows-2 preview-icon"><rect width="18" height="18" x="3" y="3" rx="2"
+      /><path d="M3 12h18"/></svg>`,
+    requiresImages: true,
+    controls: "row",
+    layout: (checkboxHtml, imageHtml, textHtml, controlsHtml) => `
+      ${imageHtml}
+      <div class="item-content">
+        ${checkboxHtml}
+        ${textHtml}
+        ${controlsHtml}
+      </div>`,
+  },
+  grid2: {
+    label: "Two column view",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="preview-icon"><rect width="8" height="18" x="2" y="3" rx="1"/>
+      <rect width="8" height="18" x="14" y="3" rx="1"/></svg>`,
+    requiresImages: true,
+    controls: "row",
+    layout: (checkboxHtml, imageHtml, textHtml, controlsHtml) => `
+      ${imageHtml}
+      <div class="item-content">
+        ${checkboxHtml}
+        ${textHtml}
+      </div>
+      ${controlsHtml}`,
+  },
+};
+
+// Button order in the switcher — add a view above and its id here.
+const viewOrder = Object.keys(views);
 
 // ─────────────────────────── DOM refs ────────────────────────────────────────
 
@@ -79,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── render ──────────────────────────────────────────────────────────────
   renderTopbar();
   renderTabBar();
-  renderShowImagesToggle();
+  renderViewSwitcher();
   renderList();
 
   // ─────────────────────────── TOPBAR ──────────────────────────────────────
@@ -156,35 +240,62 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ─────────────────────────── SHOW IMAGES TOGGLE ──────────────────────────
+  // ─────────────────────────── VIEW SWITCHER ────────────────────────────────
 
-  function renderShowImagesToggle() {
-    if (!hasImages) return;
+  function renderViewSwitcher() {
+    const tabBar = document.getElementById("tab-bar");
+    if (!tabBar) return;
 
-    const showImagesContainerEl = document.getElementById("show-images-container");
-    showImagesContainerEl.style.display = "flex";
+    let switcher = document.getElementById("view-switcher");
+    if (switcher) return; // built once; state changes go through updateViewSwitcher
 
-    // Only create once if it doesn't exist
-    if (!document.getElementById("show-images-toggle")) {
-      showImagesContainerEl.innerHTML = `
-        <div class="show-images-div">${createCheckboxToggle('show-images-toggle', showListImages, 'Show Images')}</div>`;
+    switcher = document.createElement("div");
+    switcher.id = "view-switcher";
+    switcher.className = "view-switcher";
+    switcher.style.setProperty("--view-count", viewOrder.length);
 
-      document.getElementById("show-images-toggle").addEventListener("change", function () {
-        showListImages = this.checked;
-        renderList(); // Re-render list to show/hide images in items list only
+    const buttonsHtml = viewOrder
+      .map((id) => `
+        <button type="button" class="view-btn" data-view="${id}" aria-label="${views[id].label}">
+          ${views[id].icon}
+        </button>`)
+      .join("");
+
+    switcher.innerHTML = `<span class="view-switcher-indicator" aria-hidden="true"></span>${buttonsHtml}`;
+    tabBar.insertAdjacentElement("afterend", switcher);
+
+    // A view that needs per-item images is disabled when the page has none.
+    viewOrder.forEach((id) => {
+      if (views[id].requiresImages && !hasImages) {
+        switcher.querySelector(`[data-view="${id}"]`).disabled = true;
+      }
+    });
+
+    switcher.querySelectorAll(".view-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+
+        currentView = btn.dataset.view;
+        updateViewSwitcher();
+        renderList();
       });
-    }
+    });
+
+    updateViewSwitcher();
   }
 
-  function updateShowImagesVisibility() {
-    if (!hasImages) return;
+  function updateViewSwitcher() {
+    const switcher = document.getElementById("view-switcher");
+    if (!switcher) return;
 
-    const showImagesDownloadContainerEl = document.getElementById("show-images-download-container");
-    const hasSelected = Object.values(selectionState).some(state => state.checked && (parseFloat(state.amount) || 0) > 0);
+    const activeIndex = Math.max(0, viewOrder.indexOf(currentView));
+    switcher.style.setProperty("--view-index", activeIndex);
 
-    if (showImagesDownloadContainerEl) {
-      showImagesDownloadContainerEl.style.display = hasSelected ? "flex" : "none";
-    }
+    switcher.querySelectorAll(".view-btn").forEach((btn) => {
+      const isActive = btn.dataset.view === currentView;
+      btn.classList.toggle("active", isActive);
+      btn.setAttribute("aria-pressed", String(isActive));
+    });
   }
 
   // ─────────────────────────── ITEM LIST ───────────────────────────────────
@@ -198,13 +309,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderList() {
     listContainerEl.innerHTML = "";
+    listContainerEl.className = `list-container view-${currentView}`;
 
     visibleItems().forEach((item) => {
       listContainerEl.appendChild(createRow(item));
     });
 
     // Restore state on newly rendered rows
-    listContainerEl.querySelectorAll("label[data-id]").forEach((row) => {
+    listContainerEl.querySelectorAll("[data-id]").forEach((row) => {
       const id = row.dataset.id;
       const state = selectionState[id];
       const cb = row.querySelector("input[type=checkbox]");
@@ -220,46 +332,52 @@ document.addEventListener("DOMContentLoaded", () => {
     updateDownloadPreview();
   }
 
-  function createRow(item) {
-    const label = document.createElement("label");
-    label.dataset.id = item.id;
-
+  function createItemText(item) {
     const displayName = showGujarati && item.gujarati
-      ? `${item.gujarati}`
+      ? item.gujarati
       : item.name;
 
-    const priceLabel = `(₹${item.price})`;
+    return `
+      <div class="text">
+        <span class="item-display-name">${displayName}</span>
+        <span class="item-price-tag">(₹${item.price})</span>
+      </div>`;
+  }
 
-    // Image (only if hasImages is true AND item has an image URL)
-    const hasImage = item.imageUrl && item.imageUrl.trim() !== '';
+  function createItemImage(item) {
+    const hasImage = item.imageUrl && item.imageUrl.trim() !== "";
+
+    // If this page has at least one real image, items without their own
+    // image use the page logo as a subtle grayscale fallback.
+    if (!hasImages) return "";
+
     const imageSrc = hasImage
       ? `${page.imageFolder}${item.imageUrl}`
       : page.logoUrl;
 
-    const imageClass = hasImage ? 'item-image' : 'item-image fallback-image';
-    const imageHtml = showListImages && hasImages
-      ? `<div class="item-image-container">
-           <img src="${imageSrc}" alt="${item.name}" class="${imageClass}">
-         </div>`
-      : '';
+    const imageClass = hasImage ? "item-image" : "item-image fallback-image";
 
-    label.innerHTML = `
-      <div class="checkbox-container">
+    return `
+      <div class="item-image-container">
+        <img src="${imageSrc}" alt="${item.name}" class="${imageClass}">
+      </div>`;
+  }
+
+  function createRow(item) {
+    const label = document.createElement("label");
+    label.dataset.id = item.id;
+    label.className = "list-item";
+
+    const checkboxHtml = `
+      <div class="checkbox-container item-checkbox">
         <input type="checkbox" name="checkbox" value="${item.id}">
         <div class="checkmark">${checkmarkSvg()}</div>
-      </div>
-      <div class="text">
-        <span class="item-display-name">${displayName}</span>
-        <span class="item-price-tag">${priceLabel}</span>
-      </div>
-      ${imageHtml}
-      <div class="amount-controls">
-        <input type="number" name="amount" step="0.5" min="0" placeholder="0">
-        <div class="button-column">
-          <button type="button" class="amount-btn plus-btn">+</button>
-          <button type="button" class="amount-btn minus-btn">−</button>
-        </div>
       </div>`;
+
+    const view = views[currentView];
+    const controlsHtml = amountControlLayouts[view.controls]();
+
+    label.innerHTML = view.layout(checkboxHtml, createItemImage(item), createItemText(item), controlsHtml);
 
     return label;
   }
@@ -280,7 +398,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         applyInputStyle(numInp, cb.checked);
         saveRowState(id, cb, numInp);
-        updateShowImagesVisibility();
         updateDownloadPreview();
         renderTabBar();
       });
@@ -290,7 +407,6 @@ document.addEventListener("DOMContentLoaded", () => {
         cb.checked = val > 0;
         applyInputStyle(numInp, cb.checked);
         saveRowState(id, cb, numInp);
-        updateShowImagesVisibility();
         updateDownloadPreview();
         renderTabBar();
       });
@@ -303,7 +419,6 @@ document.addEventListener("DOMContentLoaded", () => {
         cb.checked = true;
         applyInputStyle(numInp, true);
         saveRowState(id, cb, numInp);
-        updateShowImagesVisibility();
         updateDownloadPreview();
         renderTopbar();
         renderTabBar();
@@ -318,7 +433,6 @@ document.addEventListener("DOMContentLoaded", () => {
         cb.checked = newVal > 0;
         applyInputStyle(numInp, cb.checked);
         saveRowState(id, cb, numInp);
-        updateShowImagesVisibility();
         updateDownloadPreview();
         renderTabBar();
       });
@@ -440,6 +554,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const hasSelected = counter > 1;
     downloadPicEl.style.display = hasSelected ? "block" : "none";
+    showImagesDownloadContainerEl.style.display = hasSelected ? "flex" : "none";
   }
 
   // ─────────────────────────── ADD ITEM BUTTON ─────────────────────────────
