@@ -1,6 +1,6 @@
 # Make List App — Refactored Version
 
-_Structure pass: files reorganized into `css/`, `js/`, `images/`, `docs/`
+_Structure pass: files reorganized into `css/`, `js/`, `assets/`, `docs/`
 folders; the stale `.scss`/`.css` drift was fixed; two dead/duplicate CSS
 rules were removed. No app behavior changed — see `docs/` for the original
 feature changelog._
@@ -102,7 +102,7 @@ make-list-new/
 {
   id: "newbrand",
   name: "New Brand",
-  logoUrl: "images/newbrand.png",
+  logoUrl: "assets/images/newbrand.png",
   cardVariant: "variant-1",  // or variant-2, variant-3
   tabs: [
     { id: "category1", label: "Category 1" }
@@ -161,5 +161,31 @@ Open `index.html` in a browser:
 7. **Same great UI** — familiar look and feel
 
 ---
+
+## Web-first and Android workflow
+
+`index.html`, `list.html`, `css/`, `js/`, and `assets/` are the source files.
+Always make and test a feature change there first. Do not edit `www/` directly:
+it is a generated copy for Capacitor and will be replaced on the next build.
+
+1. Make the change in the web source files and test it in a browser.
+2. For stylesheet-only changes, run:
+
+   ```powershell
+   npm run build:css
+   ```
+
+3. After any change that should appear in the Android app, run:
+
+   ```powershell
+   npm run build:android
+   ```
+
+   This rebuilds CSS, copies the web source and shared `assets/` into `www/`,
+   bundles the Android JavaScript, and syncs the result to the Android project.
+4. Test the Android app. If the normal web code does not work in Capacitor,
+   add the required native-specific behavior in `js/platform.native.js` while
+   retaining the browser version in `js/platform.js`. Keep the shared feature
+   logic in the regular web files whenever possible.
 
 **Ready to use!** Just edit `data.js` to add/remove pages, tabs, or items.

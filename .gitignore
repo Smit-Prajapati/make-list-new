@@ -33,6 +33,9 @@ pnpm-debug.log*
 dist/
 build/
 
+# Generated Capacitor web build (recreated by npm run build:android)
+www/
+
 # Scraper output / downloaded data
 realbites-output/
 realbites-products.json

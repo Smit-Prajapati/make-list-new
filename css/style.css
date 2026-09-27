@@ -101,8 +101,7 @@ body {
   width: 450px;
   min-height: 100dvh;
   display: grid;
-  padding: 2rem 1rem;
-  background: rgb(96.2666666667%, 96.2666666667%, 96.2666666667%);
+  background: rgb(97.2%, 97.2%, 97.2%);
 }
 .navbar .navbar-container {
   list-style-type: none;
@@ -112,6 +111,7 @@ body {
   justify-content: center;
   margin: 0 auto 50px auto;
   width: 100%;
+  padding: 2rem 1rem;
 }
 .navbar .navbar-container .nav-card {
   display: inline-block;
@@ -160,9 +160,10 @@ body {
   padding-bottom: 100px;
   position: relative;
 }
-.container .topbar {
+
+.topbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 0 20px;
   background: rgba(255, 255, 255, 0.3);
@@ -172,21 +173,58 @@ body {
   z-index: 999;
   border-bottom: 1px solid #FFFFFF;
 }
-.container .topbar:not(:has(.gujarati-div)) {
-  justify-content: center;
+.topbar:has(.gujarati-div) {
+  justify-content: space-between;
+  padding-left: 65px;
 }
-.container .topbar .gujarati-div {
+.topbar .back-button {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: rgb(20.2666666667%, 20.2666666667%, 20.2666666667%);
+  background: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+.topbar .gujarati-div {
   border-radius: 5rem;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
-.container .topbar img#company-logo {
+.topbar img#company-logo {
   width: 80px;
 }
-.container .topbar .gujarati-text {
+.topbar .gujarati-text {
   vertical-align: 10px;
   font-size: 20px;
   margin-left: 15px;
+}
+.topbar.home-topbar {
+  justify-content: flex-start;
+  padding: 12px 20px;
+}
+.topbar.home-topbar .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.topbar.home-topbar img#home-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.topbar.home-topbar .brand-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: rgb(20.2666666667%, 20.2666666667%, 20.2666666667%);
 }
 
 .tab-bar {
