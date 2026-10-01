@@ -7,7 +7,7 @@
     <title>Make List</title>
     <link rel="stylesheet" href="css/style.css">
     <link id="favicon" rel="icon" href="assets/images/check-mark.png" type="image/png">
-    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/pages/list/list.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 
@@ -20,76 +20,55 @@
         <!-- ── Tab bar (hidden when page has no tabs) ── -->
         <div class="tab-bar" id="tab-bar" style="display:none;"></div>
 
+        <!-- ── View switcher (list / card / grid2) ── -->
+        <div class="view-switcher" id="view-switcher"></div>
+
         <!-- ── Checkbox item list ── -->
         <div class="list-container" id="list-container"></div>
 
-        <!-- ── Show Images toggle (above download preview, outside grey wrapper) ── -->
-        <div class="show-images-download-container" id="show-images-download-container" style="display:none;"></div>
-
-        <!-- ── Download preview card ── -->
-        <div class="download-pic" id="download-pic" style="display:none;">
-            <div class="inner-div">
-                <div class="top-bar">
-                    <div class="company-details">
-                        <div class="image-container">
-                            <img src="" alt="logo" id="company-logo-in-list">
-                        </div>
-                        <span id="company-name"></span>
-                    </div>
-                    <div class="details">
-                        <p class="person-name" id="person-name"></p>
-                        <p class="date" id="date"></p>
-                    </div>
-                </div>
-
-                <ul id="selected-items-list" class="selected-items-list"></ul>
-                <div class="bottom-bar">
-                    <span class="total-items" id="total-items">Total Items : 0</span>
-                    <span class="total-price" id="total-price">₹0</span>
-                </div>
+        <!-- ── Floating action buttons: Add item + Preview grouped in a pill,
+             Share as the separate primary action (opens the same preview) ── -->
+        <div class="floating-actions">
+            <div class="nav-pill">
+                <button id="add-item-button" class="nav-pill-btn" title="Add item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14" />
+                        <path d="M12 5v14" />
+                    </svg>
+                    <span>Add</span>
+                </button>
+                <button id="preview-button" class="nav-pill-btn" title="Preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    <span>Preview</span>
+                </button>
             </div>
+            <button id="share-button" class="button share-button" title="Share list">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+            </button>
         </div>
 
-        <!-- ── Floating action buttons ── -->
-        <button id="add-item-button" class="button add-item-button" title="Add item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14" /><path d="M12 5v14" />
-            </svg>
-        </button>
-        <button id="download-button" class="button download-button" title="Download list">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" x2="12" y1="15" y2="3" />
-            </svg>
-        </button>
+        <!-- ── Add item popup (form rendered by js/pages/list/addItemPopup.js) ── -->
+        <div class="popup-container" id="add-item-popup-container"></div>
 
-        <!-- ── Add item popup ── -->
-        <div class="popup-container" id="add-item-popup-container">
-            <form id="add-item-form" class="add-item-form form">
-                <h1>Add Item</h1>
-                <input type="text" required placeholder="Item Name" id="form-name-input">
-                <input type="number" required placeholder="Price" id="form-price-input">
-                <div class="button-container">
-                    <input type="submit" id="submit-item-button" class="submit-button" value="ADD">
-                    <input type="button" id="add-item-cancel-button" value="Cancel" class="cancel-button">
-                </div>
-            </form>
-        </div>
+        <!-- ── Share popup: name input, show-images toggle, preview card and
+             Download/Share/Copy actions (rendered by js/pages/list/sharePopup.js) ── -->
+        <div class="popup-container" id="share-popup-container"></div>
 
-        <!-- ── Person name popup (before download) ── -->
-        <div class="popup-container" id="person-name-popup-container">
-            <form class="person-name-form form" id="person-name-form">
-                <h1>Your Name</h1>
-                <input type="text" name="person-name" id="person-name-input" required placeholder="Your Name">
-                <div class="button-container">
-                    <input type="submit" class="submit-button" value="Download">
-                    <input type="button" id="person-name-cancel-button" value="Cancel" class="cancel-button">
-                </div>
-            </form>
-        </div>
+        <!-- ── Snackbar (toast) notifications ── -->
+        <div class="snackbar-container" id="snackbar-container"></div>
 
     </div>
 </body>

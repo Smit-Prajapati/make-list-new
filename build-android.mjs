@@ -10,7 +10,7 @@
 //   1. Builds SCSS → css/style.css
 //   2. Copies the web app into www/
 //   3. Copies HTML, shared assets, CSS, JS data and other web files
-//   4. Bundles js/script.js for Android
+//   4. Bundles js/pages/list/list.js + js/pages/home/home.js for Android
 //   5. Uses platform.native.js instead of platform.js
 //   6. Syncs everything with Capacitor
 
@@ -101,11 +101,18 @@ console.log("📦 Bundling Android JavaScript...");
 
 await build({
     entryPoints: [
-        resolve(root, "js/script.js"),
-        resolve(root, "js/index.js"),
+        resolve(root, "js/pages/list/list.js"),
+        resolve(root, "js/pages/home/home.js"),
     ],
     bundle: true,
     outdir: resolve(www, "js"),
+    // Without this, esbuild derives the output layout from the entry
+    // points' own common ancestor (js/pages/), flattening it to
+    // js/list/list.js + js/home/home.js — which wouldn't match the
+    // js/pages/list/list.js + js/pages/home/home.js paths the copied
+    // HTML files actually reference. Pinning outbase to js/ keeps the
+    // full relative path, so the bundle lands where the HTML expects it.
+    outbase: resolve(root, "js"),
     format: "esm",
 
     plugins: [

@@ -1,9 +1,12 @@
-# Make List App — Refactored Version
+# Make List App
 
-_Structure pass: files reorganized into `css/`, `js/`, `assets/`, `docs/`
-folders; the stale `.scss`/`.css` drift was fixed; two dead/duplicate CSS
-rules were removed. No app behavior changed — see `docs/` for the original
-feature changelog._
+A data-driven checklist/order-sheet builder: pick a company (Gokul, Real,
+Balaji, ...), check off items and quantities, then preview, download, copy,
+or share the resulting list. Web-first, with an Android build via Capacitor
+(`js/platform.js` / `js/platform.native.js` hold the parts that differ
+between the two — see "Web-first and Android workflow" below).
+
+_See `docs/` for the project's older, pre-restructure changelog notes._
 
 ## ✅ Completed Features
 
@@ -39,13 +42,15 @@ feature changelog._
 - When checkbox is checked → count defaults to 1
 - When user enters count > 0 → checkbox auto-checks
 - When count is 0 or empty → checkbox unchecks
-- Visual feedback: yellow border when checked
+- Visual feedback: accent-colored border when checked (derived from `$accent` in `style.scss`, so it re-themes with the rest of the app)
 
-### 6. **Download Image**
-- Selected items from **all tabs** appear in download preview
-- Shows: item name (with price in brackets), count, total price
-- Includes person name and date
-- Clean, printable format using html2canvas
+### 6. **Preview & Share**
+- **Preview** (in the bottom nav pill) and **Share** (the accent-colored circle) open the same popup — Preview for "let me check the list first", Share for "send it now"
+- The popup shows: your name (live-updates the preview as you type), a Show Images toggle, and the same preview card described above (logo, person name, date, selected items across **all tabs**, totals)
+- Three actions, always available without closing the popup:
+  - **Download** — saves the preview card as a PNG (via `html2canvas`)
+  - **Copy** — copies the list as **plain text** (item names, quantities, prices, totals) to the clipboard — no image involved
+  - **Share** — hands the same PNG to the OS share sheet (Web Share API on the web, Capacitor's Share plugin on Android) so it can go straight to WhatsApp etc.; falls back to a plain download where file-sharing isn't supported
 
 ### 7. **Add Item (Temporary)**
 - "+" button to add custom items on-the-fly
@@ -63,19 +68,66 @@ feature changelog._
 
 ```
 make-list-new/
-├── index.html         — Home page (cards auto-generated)
-├── list.html          — List page (tabs + checkboxes + download)
-├── package.json       — only used to rebuild css/style.css from the .scss
+├── index.html              — Home page (cards auto-generated)
+├── list.html               — List page (tabs + checkboxes + download)
+├── package.json            — only used to rebuild css/style.css from the .scss
 ├── js/
-│   ├── data.js        — All pages, tabs, items, prices, gujarati names
-│   ├── index.js        — Home page script (builds cards from data.js)
-│   └── script.js       — List page logic (tabs, selection, download)
+│   ├── data.js             — All pages, tabs, items, prices, gujarati names
+│   ├── constants.js        — shared storage-key constants
+│   ├── platform.js         — web platform shim (savePng, back button)
+│   ├── platform.native.js  — Capacitor/Android platform shim (same API)
+│   ├── common/              — reusable UI primitives, used by any page
+│   │   ├── checkbox.js      — plain checkbox + labeled pill toggle
+│   │   ├── input.js         — floating-label input field + validation
+│   │   ├── popup.js         — modal popup (X-close, click-outside-to-close)
+│   │   ├── snackbar.js      — toast notifications
+│   │   └── tooltip.js       — hover (desktop) / tap (mobile) tooltips
+│   ├── utils/                — small, state-free helpers
+│   │   ├── svgIcons.js
+│   │   ├── format.js
+│   │   └── itemDisplay.js
+│   └── pages/                — one folder per page; nothing outside pages/
+│       │                        is page-specific
+│       ├── home/
+│       │   ├── home.js       — entry point: builds nav cards from data.js
+│       │   └── views/
+│       │       └── homeView.js
+│       └── list/
+│           ├── list.js       — entry point: resolves the page and wires
+│           │                    the modules below together
+│           ├── state.js      — resolves the page, holds mutable list state
+│           ├── viewModes.js  — the view-mode registry (list / card / grid2)
+│           ├── header.js     — back button, logo, gujarati toggle
+│           ├── tabBar.js
+│           ├── viewSwitcher.js
+│           ├── itemList.js
+│           ├── downloadPreview.js  — computes/renders the selected-items
+│           │                         preview card shown inside the share popup
+│           ├── addItemPopup.js
+│           ├── sharePopup.js — Share button → popup (live name input +
+│           │                   preview + Download/Share/Copy actions)
+│           └── views/        — markup for each module above (pure functions,
+│               │                no state or event wiring)
+│               ├── headerView.js
+│               ├── tabBarView.js
+│               ├── viewSwitcherView.js
+│               ├── itemListView.js
+│               ├── downloadPreviewView.js
+│               ├── addItemPopupView.js
+│               └── sharePopupView.js
 ├── css/
 │   ├── style.scss     — source of truth for styling (edit this)
 │   └── style.css      — compiled output, this is what the HTML links to
-├── images/            — Logo images and item thumbnails
+├── assets/            — Logo images and item thumbnails
 └── docs/              — dev notes + a standalone test/checklist page
 ```
+
+Each list-page module (e.g. `header.js`) owns its DOM refs, state and event
+wiring; its markup lives in the matching `views/*View.js` file as a plain
+function that takes data and returns an HTML string — no DOM access, no
+event listeners. Adding a new view mode (beyond list/card/grid2) still means
+adding one entry to `js/pages/list/viewModes.js` — nothing in `itemList.js`
+or `viewSwitcher.js` needs to change.
 
 > Previously `style.scss` had drifted out of sync with `style.css` (several
 > rules — the tab bar, +/- amount buttons, show-images toggle — existed only
@@ -87,13 +139,13 @@ make-list-new/
 > npm run build:css
 > ```
 
-## 🎨 Design Preserved
+## 🎨 Design
 
-- Same color scheme (yellow checkmarks, pink/yellow/blue card variants)
-- Same checkbox animation
-- Same download preview card style
-- Same floating action buttons
-- Responsive 450px container
+- One accent color drives every interactive element (checkmarks, active tab, the primary Share button) — change `$accent` in `style.scss` and the whole app re-themes
+- Pink/yellow/blue card variants on the home page, independent of the accent color
+- Bottom nav: an Add + Preview pill alongside the primary, accent-filled Share button, both centered as one group
+- Every popup (Add Item, Share) shares the same premium-card look: X-close, click-outside-to-close, capped at the app's 450px column width
+- Responsive 450px container throughout
 
 ## 🔧 How to Modify Data
 
@@ -147,10 +199,11 @@ Open `index.html` in a browser:
 4. ✅ Check some items, enter counts
 5. ✅ Switch to "₹5 Items" → previous selections preserved
 6. ✅ Toggle gujarati → names change
-7. ✅ Click download → enter name → image downloads
-8. ✅ Click "+" → add custom item → appears in current tab
+7. ✅ Click **Preview** or the accent **Share** circle → popup opens showing selected items; typing a name updates the preview live
+8. ✅ Inside that popup, try **Download** (PNG saves), **Copy** (plain-text list copied to clipboard), and **Share** (OS share sheet / fallback download) — the popup stays open after each so you can try more than one
+9. ✅ Click "Add" → add custom item → appears in current tab
 
-## ✨ Key Improvements
+## ✨ Highlights
 
 1. **No hardcoded lists** — everything from data.js
 2. **Tab system** — filter items by category, selections persist
@@ -158,7 +211,6 @@ Open `index.html` in a browser:
 4. **Smart gujarati toggle** — only shown when needed
 5. **Better state management** — selections preserved across tab switches
 6. **Cleaner code** — modular, maintainable, well-commented
-7. **Same great UI** — familiar look and feel
 
 ---
 

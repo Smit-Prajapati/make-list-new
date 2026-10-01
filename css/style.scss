@@ -7,16 +7,13 @@
 //     Every checkbox fill, active tab, popup border, hover state,
 //     and floating button below is DERIVED from $accent.
 //     Change this single line (e.g. to a blue) and the whole app
-//     re-themes automatically — nothing else in this file needsf
+//     re-themes automatically — nothing else in this file needs
 //     to change.
 // ════════════════════════════════════════════════════════════════
 $accent: #fcd64d;
 
 $accent-strong: color.adjust($accent, $hue: -4deg, $lightness: -13%, $saturation: 3%);
 // ^ solid fills: checked checkbox, floating download button
-
-$accent-hover: color.adjust($accent, $lightness: -5%);
-// ^ hover state for accent-strong elements (buttons)
 
 $accent-tint: color.mix($accent, white, 22%);
 // ^ very light wash: checked-row background, checked-pill background
@@ -44,10 +41,15 @@ $grey-800: color.mix($grey-base, black, 43%); // selected-list item name text
 $grey-900: color.mix($grey-base, black, 38%); // checkbox label text
 
 // ════════════════════════════════════════════════════════════════
-//  3) secondary accent — the "add item" button
+//  3) secondary accent — the "download" floating button
 // ════════════════════════════════════════════════════════════════
 $accent-secondary: rgb(0, 83, 171);
-$accent-secondary-hover: color.adjust($accent-secondary, $lightness: -8%);
+
+// ════════════════════════════════════════════════════════════════
+//  3b) STATUS COLORS — non-blocking feedback (snackbar variants)
+// ════════════════════════════════════════════════════════════════
+$danger: #E5484D;
+$success: #30A46C;
 
 // ════════════════════════════════════════════════════════════════
 //  4) CARD-VARIANT PALETTE
@@ -98,13 +100,6 @@ $space-md: 1rem;
 $space-lg: 1.5rem;
 $space-xl: 2rem;
 
-// One-off negative margins that visually compensate for a specific
-// element's size (pulling an image/overlay into place). These are
-// inherently single-use "layout hacks", not reusable scale steps —
-// named here so they're still visible at a glance, not buried
-// mid-file as magic numbers.
-
-
 // ════════════════════════════════════════════════════════════════
 //  7) RADIUS SCALE
 // ════════════════════════════════════════════════════════════════
@@ -124,6 +119,20 @@ $radius-details-corner: 1.75rem; // single-use corner on the download-card detai
 $layout-width: 450px;
 $checkbox-size: 32px;
 
+// ════════════════════════════════════════════════════════════════
+//  9) Z-INDEX SCALE — every cross-component layer, low to high.
+//     A few small z-index values elsewhere (the checkbox's own
+//     checkmark layers, the download-preview card's header bands)
+//     are intentionally NOT part of this scale — each only stacks a
+//     couple of siblings within one already-contained component and
+//     never needs to compete against another part of the page.
+// ════════════════════════════════════════════════════════════════
+$z-floating-button: 10;
+$z-topbar: 20;
+$z-tooltip: 30;
+$z-popup: 40;
+$z-snackbar: 50;
+
 
 * {
     margin: 0;
@@ -134,6 +143,11 @@ $checkbox-size: 32px;
     -webkit-tap-highlight-color: transparent;
 }
 
+svg,
+svg * {
+    color: inherit;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -142,6 +156,128 @@ body {
     display: flex;
     justify-content: center;
     background: $white;
+}
+
+// ────────────────────────────────────────────────────────────────
+// REUSABLE INTERACTION HELPERS
+// One consistent language for every clickable element in the app:
+// hovering darkens its own current color, pressing it shrinks it
+// slightly for tactile feedback. hover-darken uses a brightness filter
+// instead of a hand-picked darker color, so it automatically darkens
+// WHATEVER color an element already has — a blue button and a yellow
+// button both just get their own darker selves on hover, never each
+// other's color.
+//
+// A few controls (tab-btn, amount-btn, view-btn, the checkbox) hover
+// toward the accent color instead — that's a deliberate "this previews
+// what selecting/checking it does" cue, not a hover-darken candidate,
+// and stays consistent within that group of state-preview controls.
+// ────────────────────────────────────────────────────────────────
+
+@mixin hover-darken($amount: 0.92) {
+    &:hover {
+        filter: brightness($amount);
+    }
+}
+
+@mixin press-scale($amount: 0.96) {
+    &:active {
+        transform: scale($amount);
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// REUSABLE TOOLTIP COMPONENT
+// Add `data-tooltip="message"` to any element to get this tooltip. Shown
+// on hover here in CSS; js/common/tooltip.js adds the mobile-equivalent —
+// a tap briefly adds `.tooltip-visible`, since touch has no hover.
+//
+// Placement defaults to below the target, horizontally centered on it.
+// Override either axis independently, without touching the other:
+//   data-tooltip-side="top"                — appear above instead of below
+//   data-tooltip-align="left" | "right"    — anchor to that edge of the
+//                                             target (grows away from it)
+//                                             instead of centering, so it
+//                                             can stay clear of a screen edge
+// ────────────────────────────────────────────────────────────────
+
+[data-tooltip] {
+    position: relative;
+
+    // Defaults (bottom side, centered) — each variant below only
+    // overrides the custom properties for the axis it changes.
+    --tooltip-top: calc(100% + #{$space-8});
+    --tooltip-bottom: auto;
+    --tooltip-left: 50%;
+    --tooltip-right: auto;
+    --tooltip-tx: -50%;
+    --tooltip-ty: #{-$space-4};
+    --tooltip-tx-visible: -50%;
+    --tooltip-ty-visible: 0;
+
+    &::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: var(--tooltip-top);
+        bottom: var(--tooltip-bottom);
+        left: var(--tooltip-left);
+        right: var(--tooltip-right);
+        transform: translate(var(--tooltip-tx), var(--tooltip-ty));
+        background: $grey-900;
+        color: $white;
+        font-size: 0.7rem;
+        font-weight: 600;
+        white-space: nowrap;
+        padding: $space-4 $space-10;
+        border-radius: $radius-xs;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: $z-tooltip;
+    }
+
+    &:hover::after,
+    &.tooltip-visible::after {
+        opacity: 1;
+        transform: translate(var(--tooltip-tx-visible), var(--tooltip-ty-visible));
+    }
+
+    &[data-tooltip-side="top"] {
+        --tooltip-top: auto;
+        --tooltip-bottom: calc(100% + #{$space-8});
+        --tooltip-ty: #{$space-4};
+    }
+
+    &[data-tooltip-align="left"] {
+        --tooltip-left: 0;
+        --tooltip-right: auto;
+        --tooltip-tx: 0;
+        --tooltip-tx-visible: 0;
+    }
+
+    &[data-tooltip-align="right"] {
+        --tooltip-left: auto;
+        --tooltip-right: 0;
+        --tooltip-tx: 0;
+        --tooltip-tx-visible: 0;
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// REUSABLE IMAGE HELPERS
+// Used anywhere an <img> should fill its container (nav cards, item
+// thumbnails, download-preview logo/images), and for the shared
+// grayscale "no image" look shown on items falling back to the page logo.
+// ────────────────────────────────────────────────────────────────
+
+@mixin image-fill {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+@mixin fallback-image-look {
+    filter: grayscale(100%) opacity(0.4);
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -233,8 +369,10 @@ body {
         padding: $space-sm;
         background: $white;
         border-radius: $radius-pill;
-        transition: background 0.2s;
+        transition: filter 0.2s, background 0.2s, transform 0.15s;
         border: 1px solid $grey-200;
+        @include hover-darken;
+        @include press-scale(0.97);
 
         &:has(input:checked) {
             background: $accent-tint;
@@ -250,6 +388,108 @@ body {
 }
 
 // ────────────────────────────────────────────────────────────────
+// REUSABLE INPUT COMPONENT
+// A labeled text/number field. The label sits on the left, vertically
+// centered inside the field until it's focused or filled, then floats up
+// to sit (still left-aligned) in a bordered pill on the top border — the
+// pill's border color signals which of the three states it's in: focused
+// (accent), filled but blurred (neutral grey), or its own error state (red).
+// See js/common/input.js.
+// ────────────────────────────────────────────────────────────────
+
+.input-field {
+    margin-top: $space-20;
+
+    // Wraps only the <input> + its label — kept separate from the error
+    // message below so the label's centering isn't thrown off by it.
+    .input-control {
+        position: relative;
+    }
+
+    input {
+        width: 100%;
+        background: transparent;
+        border: 2px solid $grey-200;
+        padding: $space-16;
+        font-size: 1rem;
+        border-radius: $radius-sm;
+        transition: border-color 0.2s;
+
+        &:focus {
+            outline: none;
+            border-color: $accent-strong;
+        }
+
+        // Focused: pill outlined in the same color as the active border.
+        &:focus~.input-field-label {
+            top: 0;
+            font-size: 0.75rem;
+            padding: 0 $space-8;
+            background: $white;
+            border: 1px solid $accent-strong;
+            color: $accent-ink;
+        }
+
+        // Filled but not focused: pill outlined in the input's own resting grey.
+        &:not(:placeholder-shown):not(:focus)~.input-field-label {
+            top: 0;
+            font-size: 0.75rem;
+            padding: 0 $space-8;
+            background: $white;
+            border: 1px solid $grey-200;
+            color: $grey-700;
+        }
+    }
+
+    .input-field-label {
+        position: absolute;
+        top: 50%;
+        left: $space-16;
+        transform: translateY(-50%);
+        font-size: 1rem;
+        font-weight: 500;
+        color: $grey-base;
+        background: transparent;
+        border-radius: $radius-pill;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        pointer-events: none;
+        transition: all 0.2s ease;
+    }
+
+    .input-field-error {
+        display: block;
+        min-height: 1em;
+        margin-top: $space-4;
+        padding-left: $space-4;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $danger;
+    }
+
+    &.has-error {
+        input {
+            border-color: $danger;
+
+            &:focus {
+                border-color: $danger;
+            }
+
+            // Floated pill border always matches the input's own current
+            // border color — red here, same rule as the accent/grey cases above.
+            &:focus~.input-field-label,
+            &:not(:placeholder-shown):not(:focus)~.input-field-label {
+                border-color: $danger;
+            }
+        }
+
+        .input-field-label {
+            color: $danger;
+        }
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
 // HOME PAGE — nav cards
 // ────────────────────────────────────────────────────────────────
 
@@ -257,7 +497,6 @@ body {
     width: $layout-width;
     min-height: 100dvh;
     display: grid;
-    // padding: $space-xl $space-md;
     background: $grey-50;
 
     .navbar-container {
@@ -277,6 +516,9 @@ body {
             border-radius: $radius-md;
             text-decoration: none;
             box-shadow: $shadow-card;
+            transition: filter 0.2s, transform 0.15s;
+            @include hover-darken;
+            @include press-scale(0.98);
 
             h3 {
                 font-size: 1.5rem;
@@ -289,9 +531,7 @@ body {
                 border-radius: inherit;
 
                 img {
-                    height: 100%;
-                    width: 100%;
-                    object-fit: contain;
+                    @include image-fill;
                 }
             }
 
@@ -334,17 +574,26 @@ body {
 }
 
 // ── Topbar — shared by list page (.container) and home page (.navbar) ──
+// Shared "sticky frosted-glass bar pinned to the top" look. .topbar (list
+// page: back button + logo + gujarati toggle) and .app-header (home page:
+// brand icon + "MAKE LIST", no controls) are two different components that
+// happen to share this same visual language — not the same thing wearing
+// a modifier class.
+@mixin sticky-glass-bar {
+    background: rgba($white, 0.3);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: $z-topbar;
+    border-bottom: 1px solid $white;
+}
+
 .topbar {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 0 $space-20;
-    background: rgba($white, 0.3);
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 999;
-    border-bottom: 1px solid $white;
+    @include sticky-glass-bar;
 
     &:has(.gujarati-div) {
         justify-content: space-between;
@@ -366,6 +615,15 @@ body {
         background: rgba($white, 0.6);
         text-decoration: none;
         border: 1px solid $grey-200;
+        transition: filter 0.2s, transform 0.15s;
+        @include hover-darken;
+
+        // Already uses transform to center itself, so the press effect is
+        // combined here rather than via the press-scale mixin (which would
+        // otherwise overwrite the translateY centering).
+        &:active {
+            transform: translateY(-50%) scale(0.9);
+        }
     }
 
     .gujarati-div {
@@ -382,30 +640,33 @@ body {
         font-size: 20px;
         margin-left: $space-15;
     }
+}
 
-    // ── Home page variant: icon + "MAKE LIST" pinned left ──
-    &.home-topbar {
-        justify-content: flex-start;
-        padding: $space-12 $space-20;
+// ── Home page: brand icon + "MAKE LIST", no back button or controls ──
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: $space-12 $space-20;
+    @include sticky-glass-bar;
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: $space-12;
-        }
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: $space-12;
+    }
 
-        img#home-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
+    img#home-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
 
-        .brand-name {
-            font-size: 1.25rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: $grey-900;
-        }
+    .brand-name {
+        font-size: 1.25rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: $grey-900;
     }
 }
 
@@ -439,11 +700,12 @@ body {
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
     color: $grey-700;
     display: flex;
     align-items: center;
     justify-content: center;
+    @include press-scale(0.95);
     gap: $space-8;
     white-space: nowrap;
     overflow: hidden;
@@ -498,10 +760,15 @@ body {
     background: $grey-50;
     margin-left: $space-sm;
     margin-right: $space-sm;
-    margin-bottom: $space-50;
 }
 
-label {
+// Shared by every view (list / card / grid2): the tint a row/card gets once
+// its checkbox is checked.
+@mixin checked-row-tint {
+    background: $accent-tint;
+}
+
+.list-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -511,13 +778,10 @@ label {
     padding: $space-md $space-sm;
     cursor: pointer;
     transition: all 0.2s ease-out;
-
-    &:active {
-        transform: scale(0.98);
-    }
+    @include press-scale(0.98);
 
     &:has(input[type="checkbox"]:checked) {
-        background: $accent-tint;
+        @include checked-row-tint;
     }
 
     &:nth-child(odd) {
@@ -529,7 +793,7 @@ label {
     }
 
     &:has(input[type="checkbox"]:checked):nth-child(odd) {
-        background: $accent-tint;
+        @include checked-row-tint;
     }
 
     // Item name + price tag
@@ -588,9 +852,7 @@ label {
             color: $accent-ink;
         }
 
-        &:active {
-            transform: scale(0.95);
-        }
+        @include press-scale(0.95);
     }
 
     input[type="number"] {
@@ -624,13 +886,11 @@ label {
         border-radius: $radius-sm;
 
         .item-image {
-            height: 100%;
-            width: 100%;
-            object-fit: contain;
+            @include image-fill;
         }
 
         .fallback-image {
-            filter: grayscale(100%) opacity(0.4);
+            @include fallback-image-look;
         }
     }
 }
@@ -639,44 +899,120 @@ label {
 // FLOATING BUTTONS
 // ────────────────────────────────────────────────────────────────
 
-.button {
+// Centers the Add + Share buttons as one group at the bottom, instead of
+// pinning each individually to a screen edge.
+.floating-actions {
     position: fixed;
-    background: $accent-secondary;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    z-index: $z-floating-button;
+    display: flex;
+    align-items: center;
+    gap: $space-16;
+}
+
+// Same white-card + border + shadow language as the rest of the app
+// (popup-close-button, tab-btn, nav-card) — both floating buttons share
+// this identically, differing only in size and (for the primary action)
+// the filled background.
+.button {
+    background: $white;
     width: 70px;
     aspect-ratio: 1;
     border-radius: $radius-circle;
-    border: 2px solid $white;
-    transition: all 0.5s ease-in-out;
+    border: 1px solid $grey-200;
+    transition: filter 0.2s, transform 0.15s;
     display: grid;
     place-content: center;
     box-shadow: $shadow-raised;
-    z-index: 2;
     cursor: pointer;
+    @include hover-darken;
+    @include press-scale(0.92);
 
     svg {
-        stroke: $white;
-        stroke-width: 3px;
+        stroke: $accent-ink;
+        stroke-width: 2.5px;
     }
 }
 
-.download-button {
-    right: 20px;
-    bottom: 20px;
+// Primary action — filled with the brand accent instead of white, same
+// "dark icon on accent fill" language already used by the active tab.
+.share-button {
+    border: 2px solid transparent;
+    border-radius: $radius-circle;
 
-    &:hover {
-        background: $accent-hover;
+    background:
+        linear-gradient(180deg,
+            lighten($accent-strong, 8%) 0%,
+            $accent-strong 100%) padding-box,
+
+        linear-gradient(180deg,
+            lighten($accent-strong, 25%) 0%,
+            darken($accent-strong, 15%) 100%) border-box;
+
+    svg {
+        stroke: $black;
     }
 }
 
-.add-item-button {
-    background: $accent-strong;
-    width: 50px;
-    right: 97px;
-    bottom: 24px;
+// Add + Preview, grouped as icon+label buttons inside one rounded pill —
+// two lightweight, equal-weight actions next to the one bold primary action.
+.nav-pill {
+    display: flex;
+    align-items: stretch;
+    gap: $space-4;
+    padding: $space-4;
+    background: $white;
+    border: 1px solid $grey-100;
+    border-radius: $radius-pill;
+    box-shadow: $shadow-raised;
+}
+
+.nav-pill-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    min-width: 70px;
+    padding: $space-8 $space-16;
+    border: none;
+    border-radius: $radius-pill;
+    background: transparent;
+    color: $grey-700;
+    font-size: 0.7rem;
+    font-weight: 600;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s, filter 0.2s, transform 0.15s;
+    @include press-scale(0.95);
+
+
+    svg {
+        stroke: currentColor;
+    }
 
     &:hover {
-        background: $accent-hover;
+        background: $grey-100;
     }
+}
+
+.nav-pill-btn[data-badge]:not([data-badge=""])::after {
+    content: attr(data-badge);
+    position: absolute;
+    top: -10px;
+    right: 0px;
+    background: $accent;
+    border: 2px solid $white;
+    color: $black;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: $space-2 $space-4;
+    border-radius: $radius-pill;
+    min-width: 16px;
+    text-align: center;
+    box-shadow: $shadow-raised;
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -685,7 +1021,7 @@ label {
 
 .download-pic {
     background: $grey-100;
-    padding: $space-md;
+    padding: $space-sm;
 
     .inner-div {
         background: $white;
@@ -716,9 +1052,7 @@ label {
                     width: 80px;
 
                     img {
-                        height: 100%;
-                        width: 100%;
-                        object-fit: contain;
+                        @include image-fill;
                     }
                 }
 
@@ -797,13 +1131,11 @@ label {
                     border-radius: $radius-sm;
 
                     img {
-                        height: 100%;
-                        width: 100%;
-                        object-fit: contain;
+                        @include image-fill;
                     }
 
-                    img.default-item-image {
-                        filter: grayscale(1) opacity(0.4);
+                    img.fallback-image {
+                        @include fallback-image-look;
                     }
 
                     &:empty {
@@ -851,80 +1183,282 @@ label {
 // ────────────────────────────────────────────────────────────────
 
 .popup-container {
-    display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100dvh;
-    background: $overlay-scrim;
-    backdrop-filter: blur(10px);
+    inset: 0;
+    display: flex;
     justify-content: center;
     align-items: center;
     padding: $space-20;
-    z-index: 9999999;
-    transition: all 0.5s ease-in-out;
+    background: $overlay-scrim;
+    backdrop-filter: blur(10px);
+    z-index: $z-popup;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+
+    &.open {
+        opacity: 1;
+        visibility: visible;
+
+        .form {
+            transform: scale(1) translateY(0);
+        }
+    }
 
     .form {
+        position: relative;
         display: block;
         background: $white;
-        padding: $space-20;
-        width: 500px;
+        padding: $space-lg;
+        width: 100%;
+        // Capped at the same $layout-width as the rest of the app, instead
+        // of stretching wider than the app's own column on bigger screens.
+        max-width: $layout-width;
         border-radius: $radius-form;
-        border: 5px solid $accent-strong;
+        box-shadow: $shadow-card, 0 0 0 1px rgba($black, 0.04);
+        transform: scale(0.94) translateY(8px);
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 
         h1 {
-            color: $accent-strong;
-            text-transform: uppercase;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: $grey-900;
+            padding-right: $space-xl; // stay clear of the close button
         }
 
-        input {
-            margin-top: $space-20;
-            width: 100%;
-            background: $white;
-            border: 1px solid $grey-200;
-            padding: $space-20;
-            border-radius: $radius-sm;
-
-            &:focus {
-                outline: 2px solid $accent-strong;
-            }
-        }
+        // Text/number fields use the reusable .input-field component
+        // (see the REUSABLE INPUT COMPONENT section above).
 
         .button-container {
             display: flex;
             gap: $space-20;
             width: 100%;
+            margin-top: $space-20;
 
             .submit-button {
-                width: unset;
+                width: 100%;
                 background: $accent-strong;
                 border: none;
                 color: $white;
-                font-weight: 900;
-                font-size: 1.1rem;
-                flex-grow: 1;
+                font-weight: 700;
+                font-size: 1.05rem;
+                padding: $space-16;
+                border-radius: $radius-sm;
                 cursor: pointer;
-
-                &:hover {
-                    background: $accent-hover;
-                }
-            }
-
-            .cancel-button {
-                width: unset;
-                flex-grow: 0;
-                border: 1px solid $accent-strong;
-                color: $accent;
-                font-size: 1.1rem;
-                cursor: pointer;
-
-                &:hover {
-                    background: $accent-strong;
-                    color: $white;
-                }
+                transition: filter 0.2s, transform 0.15s;
+                @include hover-darken;
+                @include press-scale(0.98);
             }
         }
+
+        .popup-close-button {
+            position: absolute;
+            top: $space-12;
+            right: $space-12;
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: $radius-circle;
+            background: $grey-100;
+            color: $grey-700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.15s;
+            @include hover-darken;
+            @include press-scale(0.9);
+
+            svg {
+                stroke: currentColor;
+            }
+        }
+    }
+
+    // ── Share popup: near-fullscreen sheet (just a thin 0.5rem margin to
+    // the screen edge) with a scrollable body (show-images toggle + preview
+    // card) and a bottom section — name input + action buttons — that stays
+    // fixed in place regardless of scroll position. ──
+    &#share-popup-container {
+        padding: $space-8;
+        align-items: stretch;
+    }
+
+    .share-popup-form {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        // width/max-width and all four sides of padding come from the
+        // shared .form rule above — same as every other popup. Only the
+        // list itself bleeds out further, right below.
+
+        h1 {
+            flex-shrink: 0;
+        }
+
+        .share-popup-scroll {
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0; // let flex actually shrink/scroll this instead of overflowing the form
+            // Bleed past the form's own side padding so just the list gets
+            // the tighter 0.5rem inset, instead of the full 2rem.
+            margin: 0 (-$space-lg);
+            padding: 0 $space-8;
+        }
+
+        .share-popup-bottom {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            // The gap between the name input and the button row lives here,
+            // not as padding on .share-popup-actions.
+            gap: $space-16;
+            padding-top: $space-16;
+            border-top: 1px solid $grey-200;
+
+            .input-field {
+                margin-top: 0;
+            }
+        }
+
+        .share-popup-actions {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2.5fr);
+            gap: $space-12;
+        }
+    }
+
+    .icon-action-button {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $space-4;
+        padding: $space-10;
+        border: 1px solid $grey-200;
+        border-radius: $radius-sm;
+        background: $white;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: $grey-700;
+        cursor: pointer;
+        transition: filter 0.2s, transform 0.15s;
+        @include hover-darken;
+        @include press-scale(0.95);
+
+        // Share is the primary action here: bigger than Download/Copy, and
+        // filled with the brand accent like the floating Share button.
+        &.icon-action-button-primary {
+            flex: 1.4;
+            background: $accent-strong;
+            border-color: $accent-strong;
+            color: $accent-ink;
+
+            svg {
+                width: 22px;
+                height: 22px;
+                stroke: $black;
+            }
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+        }
+
+        // The global `* { color: $black; }` reset sets color directly on
+        // every element (not just via inheritance), so this label span
+        // needs the same "inherit from parent" fix already used for
+        // svg/svg * elsewhere — otherwise it always renders black instead
+        // of the button's own color (grey-700, or accent-ink when primary).
+        span {
+            color: inherit;
+        }
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// SNACKBAR — brief non-blocking status messages (replaces alert())
+// ────────────────────────────────────────────────────────────────
+
+.snackbar-container {
+    position: fixed;
+    left: 50%;
+    bottom: $space-100;
+    transform: translateX(-50%);
+    z-index: $z-snackbar;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-8;
+    width: calc(100% - #{$space-20 * 2});
+    max-width: $layout-width - $space-20 * 2;
+    pointer-events: none;
+}
+
+.snackbar {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-12;
+    background: $grey-900;
+    color: $white;
+    padding: $space-12 $space-8 $space-12 $space-20;
+    border-radius: $radius-sm;
+    box-shadow: $shadow-raised;
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+
+    &.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .snackbar-message {
+        flex: 1;
+        color: inherit;
+    }
+
+    .snackbar-close-button {
+        flex-shrink: 0;
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        border-left: 1px solid rgba($white, 0.3);
+        margin-left: $space-4;
+        padding: 0 0 0 $space-12;
+        color: inherit;
+        cursor: pointer;
+        transition: opacity 0.2s, transform 0.15s;
+        @include press-scale(0.85);
+
+        svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+        }
+
+        &:hover {
+            opacity: 0.7;
+        }
+    }
+
+    &.snackbar-success {
+        background: $success;
+        color: $white;
+    }
+
+    &.snackbar-error {
+        background: $danger;
+        color: $white;
     }
 }
 
@@ -938,7 +1472,12 @@ label {
     border-radius: $radius-pill;
     background: $grey-100;
     border: 1px solid $grey-200;
-    isolation: isolate;
+    // No `isolation: isolate` here on purpose — it would wall this element
+    // off into its own stacking context, trapping a disabled button's
+    // tooltip (z-index: $z-tooltip) inside it where it could never win
+    // against the sticky topbar (z-index: $z-topbar) sitting outside that
+    // context. The indicator/button z-index below still order correctly
+    // against each other without it, since both are already positioned.
     --view-index: 0;
     --view-slot: 52px;
 
@@ -959,7 +1498,7 @@ label {
 
     .view-btn {
         position: relative;
-        z-index: 1;
+        z-index: 1; // only needs to beat the indicator (z-index: 0) locally
         width: 52px;
         height: 52px;
         margin: 0 auto;
@@ -972,7 +1511,8 @@ label {
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: color 0.25s ease, opacity 0.2s ease;
+        transition: color 0.25s ease, opacity 0.2s ease, transform 0.15s ease;
+        @include press-scale(0.85);
 
         svg {
             width: 24px;
@@ -984,13 +1524,81 @@ label {
             color: $accent-strong;
         }
 
-        &:hover:not(:disabled) {
+        &:hover:not(.disabled) {
             color: $accent-strong;
         }
 
-        &:disabled {
+        &.disabled {
             opacity: 0.28;
             cursor: not-allowed;
+        }
+    }
+}
+
+// Shared by the card and grid2 views below: both lay out one item as an
+// image + text/controls "card". Each view includes this for the parts
+// that are identical, then adds only what actually differs between them
+// (column/row template, image size, spacing, font sizes, grid placement).
+@mixin list-item-card-base {
+    display: grid;
+    min-width: 0;
+    background: $white;
+    border: 1px solid $grey-200;
+    border-radius: $radius-md;
+    box-shadow: $shadow-pill;
+
+    &:has(input[type="checkbox"]:checked) {
+        @include checked-row-tint;
+        border-color: $accent;
+    }
+
+    .item-checkbox {
+        align-self: flex-end;
+    }
+
+    .item-image-container {
+        overflow: hidden;
+        border-radius: $radius-sm;
+
+        .fallback-image {
+            object-fit: cover;
+        }
+    }
+
+    .item-content {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .text {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: $space-1;
+
+        .item-display-name {
+            font-weight: 700;
+            line-height: 1.15;
+            overflow-wrap: anywhere;
+        }
+
+        .item-price-tag {
+            font-weight: 500;
+        }
+    }
+
+    .amount-controls {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr) 40px;
+        gap: $space-4;
+        width: 100%;
+
+        input[type="number"],
+        .amount-btn {
+            width: 100%;
+            height: 44px;
         }
     }
 }
@@ -1002,66 +1610,33 @@ label {
     padding: $space-sm;
 
     .list-item {
-        display: grid;
+        @include list-item-card-base;
         grid-template-columns: 68px minmax(0, 1fr);
         grid-template-rows: auto auto; // row 1: image + content, row 2: controls (bottom)
         gap: $space-10 $space-8;
-        min-width: 0;
         padding: $space-12;
-        background: $white;
-        border: 1px solid $grey-200;
-        border-radius: $radius-md;
-        box-shadow: $shadow-pill;
         font-size: 16px;
-
-        &:has(input[type="checkbox"]:checked) {
-            background: $accent-tint;
-            border-color: $accent;
-        }
 
         .item-image-container {
             grid-column: 1;
             grid-row: 1;
             width: 68px;
             height: auto;
-            overflow: hidden;
-            border-radius: $radius-sm;
-
-            .fallback-image {
-                object-fit: cover;
-            }
         }
 
         .item-content {
             grid-column: 2;
             grid-row: 1;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
             gap: $space-4;
         }
 
-        .item-checkbox {
-            align-self: flex-end;
-        }
-
         .text {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            gap: $space-1;
-
             .item-display-name {
                 font-size: 1rem;
-                font-weight: 700;
-                line-height: 1.15;
-                overflow-wrap: anywhere;
             }
 
             .item-price-tag {
                 font-size: 0.75rem;
-                font-weight: 500;
             }
         }
 
@@ -1069,16 +1644,6 @@ label {
         .amount-controls {
             grid-column: 1 / -1;
             grid-row: 2;
-            display: grid;
-            grid-template-columns: 40px minmax(0, 1fr) 40px;
-            gap: $space-4;
-            width: 100%;
-
-            input[type="number"],
-            .amount-btn {
-                width: 100%;
-                height: 44px;
-            }
         }
     }
 }
@@ -1090,75 +1655,28 @@ label {
     padding: $space-sm;
 
     .list-item {
-        display: grid;
+        @include list-item-card-base;
         grid-template-columns: 150px minmax(0, 1fr);
         gap: $space-16;
-        min-width: 0;
         padding: $space-16;
-        background: $white;
-        border: 1px solid $grey-200;
-        border-radius: $radius-md;
-        box-shadow: $shadow-pill;
         font-size: 18px;
-
-        &:has(input[type="checkbox"]:checked) {
-            background: $accent-tint;
-            border-color: $accent;
-        }
 
         .item-image-container {
             width: 150px;
             height: 150px;
-            overflow: hidden;
-            border-radius: $radius-sm;
-
-            .fallback-image {
-                object-fit: cover;
-            }
         }
 
         .item-content {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
             gap: $space-10;
-            height: 100%;
-        }
-
-        .item-checkbox {
-            align-self: flex-end;
         }
 
         .text {
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            gap: $space-1;
-
             .item-display-name {
                 font-size: 1.25rem;
-                font-weight: 700;
-                line-height: 1.15;
-                overflow-wrap: anywhere;
             }
 
             .item-price-tag {
                 font-size: 0.85rem;
-                font-weight: 500;
-            }
-        }
-
-        // Same row as image
-        .amount-controls {
-            display: grid;
-            grid-template-columns: 40px minmax(0, 1fr) 40px;
-            gap: $space-4;
-            width: 100%;
-
-            input[type="number"],
-            .amount-btn {
-                width: 100%;
-                height: 44px;
             }
         }
     }
