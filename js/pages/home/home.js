@@ -1,21 +1,20 @@
-import { pages } from "./data.js";
-import { setupBackButton } from "./platform.js";
+// ─── home.js — home page entry point ─────────────────────────────────────────
+
+import { pages } from "../../data.js";
+import { setupBackButton } from "../../platform.js";
+import { initTooltips } from "../../common/tooltip.js";
+import { renderNavCard } from "./views/homeView.js";
 
 // On Android, pressing Back from Home exits the app.
 setupBackButton();
+initTooltips();
 
 // Build home-page nav cards from data
 const container = document.getElementById("navbar-container");
 
 pages.forEach((page) => {
   const li = document.createElement("li");
-  li.innerHTML = `
-    <a href="list.html?list=${page.id}" class="nav-card ${page.cardVariant}">
-      <h3>${page.name}</h3>
-      <div class="image-container">
-        <img src="${page.logoUrl}" alt="${page.name}">
-      </div>
-    </a>`;
+  li.innerHTML = renderNavCard(page);
 
   // Capacitor WebViews can drop URL query parameters during page navigation.
   // Keep the selected list in the current browser session as a native-safe fallback.
