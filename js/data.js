@@ -88,15 +88,15 @@ export const pages = [
 
     tabs: [
       { id: "real", label: "Real" },
-      { id: "5", label: "₹5 Items" },
-      { id: "10", label: "₹10 Items" },
-      { id: "20", label: "₹20 Items" },
-      { id: "30", label: "₹30 Items" },
-      { id: "40", label: "₹40 Items" },
-      { id: "200g", label: "200g" },
-      { id: "250g", label: "250g" },
-      { id: "350g", label: "350g" },
-      { id: "400g", label: "400g" },
+      // { id: "5", label: "₹5 Items" },
+      // { id: "10", label: "₹10 Items" },
+      // { id: "20", label: "₹20 Items" },
+      // { id: "30", label: "₹30 Items" },
+      // { id: "40", label: "₹40 Items" },
+      // { id: "200g", label: "200g" },
+      // { id: "250g", label: "250g" },
+      // { id: "350g", label: "350g" },
+      // { id: "400g", label: "400g" },
       { id: "500g", label: "500g" }
     ],
 
@@ -314,9 +314,9 @@ export const pages = [
       // { id: 181, tabId: "400g", name: "Soya Stick (400g)", gujarati: "સોયા સ્ટિક", price: 135, imageUrl: "Soya_Stick.png" },
       // { id: 182, tabId: "400g", name: "Tikha Mitha Mix (400g)", gujarati: "તીખા મીઠા મિક્સ", price: 135, imageUrl: "Tikha_Mitha_Mix.png" },
 
-      // // ───────────────────── 500g ─────────────────────
+      // ───────────────────── 500g ─────────────────────
 
-      // { id: 183, tabId: "500g", name: "Carnival Cookies (500g)", gujarati: "કાર્નિવલ કૂકીઝ", price: 165, imageUrl: "Carnival_Cookies.png" }
+      { id: 183, tabId: "500g", name: "Carnival Cookies (500g)", gujarati: "કાર્નિવલ કૂકીઝ", price: 165, imageUrl: "Carnival_Cookies.png" }
     ]
   },
 
