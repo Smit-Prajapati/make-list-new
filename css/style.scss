@@ -648,6 +648,7 @@ body {
     align-items: center;
     justify-content: flex-start;
     padding: $space-12 $space-20;
+    max-height: 70px;
     @include sticky-glass-bar;
 
     .brand {
@@ -760,6 +761,10 @@ body {
     background: $grey-50;
     margin-left: $space-sm;
     margin-right: $space-sm;
+
+    &:empty {
+        display: none;
+    }
 }
 
 // Shared by every view (list / card / grid2): the tint a row/card gets once
@@ -1179,9 +1184,37 @@ body {
 }
 
 // ────────────────────────────────────────────────────────────────
-// POPUPS
+// LOADER COMPONENT
 // ────────────────────────────────────────────────────────────────
+.loader-container {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: $white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
 
+    &.fade-out {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid $grey-200;
+    border-top: 4px solid $accent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 .popup-container {
     position: fixed;
     inset: 0;
