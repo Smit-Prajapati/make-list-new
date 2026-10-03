@@ -2,6 +2,7 @@
 // their checkbox / amount controls ───────────────────────────────────────────
 
 import { renderItemRow } from "./views/itemListView.js";
+import { initImageLoaders } from "../../common/loader.js";
 
 export function createItemList(ctx) {
   const { page, state, els } = ctx;
@@ -103,6 +104,8 @@ export function createItemList(ctx) {
 
     attachRowListeners();
     ctx.updateDownloadPreview();
+    // Attach inline spinners to any freshly rendered images
+    initImageLoaders(els.listContainerEl);
   }
 
   return { render };

@@ -8,7 +8,6 @@ import { setupBackButton } from "../../platform.js";
 //   Android bundle: esbuild aliases platform.js → platform.native.js at build time.
 
 import { initTooltips } from "../../common/tooltip.js";
-import { createLoader } from "../../common/loader.js";
 import { resolvePage, createListState } from "./state.js";
 import { createHeader } from "./header.js";
 import { createTabBar } from "./tabBar.js";
@@ -70,15 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
   sharePopup.init();
 
   // ─── initial render ────────────────────────────────────────────────────
-  // Show full-page loader until all rendered content and images are ready
-  const loader = createLoader();
-  loader.show();
-
   ctx.renderHeader();
   ctx.renderTabBar();
   viewSwitcher.render();
   ctx.renderList();
-
-  // Hide as soon as list images and header icons have loaded
-  loader.hideWhenImagesLoaded(document);
 });
